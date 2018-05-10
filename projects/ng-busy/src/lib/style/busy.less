@@ -1,0 +1,91 @@
+.ng-busy {
+  z-index: 1002;
+
+  &,
+  > *,
+  > ng-component > * {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+  }
+}
+
+.ng-busy-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1001;
+  background: #fff;
+  opacity: .7;
+}
+
+.ng-busy-default-wrapper {
+  text-align: center;
+}
+
+.ng-busy-default-sign {
+  position: relative;
+  display: inline-block;
+  z-index: 1003;
+  padding: 12px 14px;
+  border: 1px solid #d8d8d8;
+  border-top: 0;
+  border-radius: 4px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
+  background: #f8f8f8;
+  color: #333;
+}
+
+.ng-busy-default-text {
+  display: inline-block;
+  margin-left: 6px;
+  max-width: 400px;
+  font-size: 14px;
+  text-align: left;
+}
+
+.ng-busy-default-spinner {
+  position: relative;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+
+  div {
+    position: absolute;
+    left: 44.5%;
+    top: 37%;
+    width: 10%;
+    height: 26%;
+    background: #666;
+    border-radius: 50px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, .2);
+    opacity: 0;
+    animation: busy-spinner-anim 1s linear infinite;
+  }
+
+  .generate-bars(@n, @i: 1) when (@i =< @n) {
+    .bar@{i} {
+      transform: rotate(unit(360 / 12 * (@i - 1), deg)) translate(0, -142%);
+      animation-delay: unit(-1 + 1 / 12 * (@i - 1), s);
+    }
+    .generate-bars(@n, (@i + 1));
+  }
+
+  .generate-bars(12);
+}
+
+@keyframes busy-spinner-anim {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.25;
+  }
+}

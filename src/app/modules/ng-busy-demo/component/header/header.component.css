@@ -1,0 +1,14 @@
+/**
+ * @file Header style
+ * @author yumao<yuzhang.lille@gmail.com>
+ */
+header {
+    padding: 3rem .9375rem;
+    margin-bottom: 3rem;
+    background: #b03a58;
+    color: #e8bac5;
+}
+header h1 {
+    color: #fff;
+    font-size: 3rem;
+}
