@@ -68,9 +68,9 @@ export class BusyDirective implements DoCheck {
             return;
         }
 
-        if (!equals(options.busy, this.tracker.promiseList)) {
+        if (!equals(options.busy, this.tracker.busyList)) {
             this.tracker.reset({
-                promiseList: options.busy,
+              busyList: options.busy,
                 delay: options.delay,
                 minDuration: options.minDuration
             });

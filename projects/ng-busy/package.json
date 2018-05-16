@@ -1,9 +1,39 @@
 {
   "name": "ng-busy",
   "version": "0.0.1",
+  "description": "Show busy/loading indicators on any promise or subscription",
+  "author": "victos",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/victos/ng-busy.git"
+  },
+  "homepage": "https://github.com/victos/ng-busy",
+  "bugs": {
+    "url": "https://github.com/victos/ng-busy"
+  },
+  "keywords": [
+    "angular",
+    "angular2",
+    "busy",
+    "loading",
+    "angular2-busy",
+    "ng2-busy",
+    "ng-busy",
+    "waiting",
+    "angular5",
+    "angular6"
+  ],
+  "engines": {
+    "node": ">= 8.0.0",
+    "npm": ">= 5.6.0"
+  },
   "peerDependencies": {
     "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
     "@angular/core": "^6.0.0-rc.0 || ^6.0.0",
     "rxjs": "^6.0.0"
+  },
+  "devDependencies": {
+    "less": "^3.0.4"
   }
 }

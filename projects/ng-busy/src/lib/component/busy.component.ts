@@ -1,7 +1,8 @@
-import {Component, Directive, ViewChild, ElementRef, Inject} from '@angular/core';
+import {Component, Directive, ViewChild, ElementRef, Inject, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import {trigger, style, transition, animate} from '@angular/animations';
 
 import {TrackerService} from '../service/tracker.service';
+import {Subscription} from 'rxjs/internal/Subscription';
 
 
 const inactiveStyle = style({
@@ -39,17 +40,30 @@ export class BusyContainerDirective {
         ])
     ]
 })
-export class BusyComponent {
-    public wrapperClass: string;
+export class BusyComponent implements OnDestroy {
+  public wrapperClass: string;
+  sub: Subscription = new Subscription();
 
-    @ViewChild(BusyContainerDirective, {read: ElementRef}) private busyContainer: ElementRef;
+  @ViewChild(BusyContainerDirective, {read: ElementRef}) private busyContainer: ElementRef;
 
-    constructor(@Inject('busyConfig') private config: any,
-                private tracker: TrackerService) {
-        this.wrapperClass = this.config.wrapperClass;
-    }
+  constructor(
+    @Inject('busyConfig') private config: any,
+    private tracker: TrackerService,
+    private readonly cdr: ChangeDetectorRef
+  ) {
+    this.wrapperClass = this.config.wrapperClass;
+    this.sub.add(this.tracker.onCheckPending.subscribe(() => {
+      if (this.cdr) {
+        this.cdr.markForCheck();
+      }
+    }));
+  }
 
-    isActive() {
-        return this.tracker.isActive();
-    }
+  isActive() {
+    return this.tracker.isActive();
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+  }
 }

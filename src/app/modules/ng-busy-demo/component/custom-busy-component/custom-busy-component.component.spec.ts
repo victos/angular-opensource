@@ -8,7 +8,8 @@ describe('CustomBusyComponentComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CustomBusyComponentComponent ]
+      declarations: [ CustomBusyComponentComponent ],
+      providers: [{provide: 'message', useValue: 'hello'}]
     })
     .compileComponents();
   }));
