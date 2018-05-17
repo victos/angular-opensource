@@ -40,6 +40,9 @@ export class BusyTrackerService implements OnDestroy {
     this.__isActive = val;
     this.onCheckPending.emit();
   }
+  get busyList(){
+    return this.busyQueue;
+  }
 
   constructor() {
     this.onDelayDone.subscribe(() => {

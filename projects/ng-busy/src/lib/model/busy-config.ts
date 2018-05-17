@@ -66,7 +66,7 @@ export interface IBusyConfig {
     backdrop?: boolean;
     message?: string;
     wrapperClass?: string;
-    busy?: Promise<any> | Subscription | Array<Promise<any> | Subscription>;
+    busy?: Array<Promise<any> | Subscription>;
 }
 
 export const BUSY_CONFIG_DEFAULTS = {
