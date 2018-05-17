@@ -1,5 +1,5 @@
 import {EventEmitter, Injectable, OnDestroy} from '@angular/core';
-import {Subscription} from 'rxjs/index';
+import {Subscription} from 'rxjs';
 
 export interface TrackerOptions {
   minDuration: number;
@@ -23,15 +23,18 @@ export class BusyTrackerService implements OnDestroy {
   onStopBusy: EventEmitter<any>;
   onCheckPending = new EventEmitter();
 
+  get isUpdateActiveStatusAllowedToRun(): boolean {
+    return this.delayTimer === undefined && this.durationTimer === undefined;
+  }
   get isActive(): boolean {
     return this.__isActive;
   }
 
   set isActive(val: boolean) {
-    if (this.__isActive === false && val === true) {
+    if (this.__isActive === false && val === true && this.onStartBusy) {
       this.onStartBusy.emit();
     }
-    if (this.__isActive === true && val === false) {
+    if (this.__isActive === true && val === false && this.onStopBusy) {
       this.onStopBusy.emit();
     }
     this.__isActive = val;
@@ -42,6 +45,9 @@ export class BusyTrackerService implements OnDestroy {
     this.onDelayDone.subscribe(() => {
       this.delayTimer = undefined;
       this.isActive = this.busyQueue.length > 0;
+      if (!this.isActive && this.durationTimer) {
+        clearTimeout(this.durationTimer);
+      }
     });
     this.onMinDurationDone.subscribe(() => {
       this.durationTimer = undefined;
@@ -54,17 +60,19 @@ export class BusyTrackerService implements OnDestroy {
     this.startLoading(options);
   }
 
-  private checkActiveStatus() {
-    const queueLength = this.busyQueue.length;
-    if (queueLength === 0) {
-      if (this.delayTimer) {
-        clearTimeout(this.delayTimer);
+  private updateActiveStatus() {
+    if (this.isUpdateActiveStatusAllowedToRun) {
+      const queueLength = this.busyQueue.length;
+      if (queueLength === 0) {
+        if (this.delayTimer) {
+          clearTimeout(this.delayTimer);
+        }
+        if (this.durationTimer) {
+          clearTimeout(this.durationTimer);
+        }
       }
-      if (this.durationTimer) {
-        clearTimeout(this.durationTimer);
-      }
+      this.isActive = queueLength > 0;
     }
-    this.isActive = queueLength > 0;
   }
 
   private startLoading(options: TrackerOptions) {
@@ -73,6 +81,10 @@ export class BusyTrackerService implements OnDestroy {
     }
     this.startDelay(options.delay);
     this.startMinDuration(options.minDuration, options.delay);
+    if (!options.delay && options.minDuration) {
+      this.isActive = true;
+    }
+    this.updateActiveStatus();
   }
 
   private startDelay(delay: number) {
@@ -98,7 +110,6 @@ export class BusyTrackerService implements OnDestroy {
   }
 
   private loadBusyQueue(busyList: Array<Promise<any> | Subscription>) {
-    this.busyQueue = [];
     busyList.filter((busy) => busy && !busy['__load_complete_mark_by_ng_busy'] && this.busyQueue.indexOf(busy) < 0)
       .forEach(busy => {
         this.addToBusyQueue(busy);
@@ -129,7 +140,7 @@ export class BusyTrackerService implements OnDestroy {
     if (index >= 0) {
       this.busyQueue.splice(index, 1);
     }
-    this.checkActiveStatus();
+    this.updateActiveStatus();
   }
 
   ngOnDestroy(): void {
