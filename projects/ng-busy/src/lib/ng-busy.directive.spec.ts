@@ -86,7 +86,7 @@ describe('NgBusyDirective', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TestNgBusyComponent, CustomBusyComponent],
+      declarations: [TestNgBusyComponent, CustomBusyComponent, TestNgBusyComponentOnPush],
       imports: [NgBusyModule, BrowserAnimationsModule],
       providers: [BusyConfigHolderService, BusyTrackerService,
         ApplicationRef, ViewContainerRef, {provide: ElementRef, useValue: mockElementRef}, Renderer2, Injector]
@@ -189,13 +189,17 @@ describe('NgBusyDirective', () => {
   }));
 
   it('should work as expected when use ChangeDetectionStrategy.OnPush', fakeAsync(() => {
-    component.options = createPromiseWithDelay(1000);
-    fixture.detectChanges();
+    const fixtureOnPush: ComponentFixture<TestNgBusyComponentOnPush> = TestBed.createComponent(TestNgBusyComponentOnPush);
+    const componentOnPush: TestNgBusyComponentOnPush = fixtureOnPush.componentInstance;
+    mockElementRef.nativeElement = fixtureOnPush.elementRef.nativeElement;
+    fixtureOnPush.detectChanges();
+    componentOnPush.options = createPromiseWithDelay(1000);
+    fixtureOnPush.detectChanges();
     tick(300);
-    fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeDefined();
+    fixtureOnPush.detectChanges();
+    expect(fixtureOnPush.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeDefined();
     tick(701);
-    fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeNull();
+    fixtureOnPush.detectChanges();
+    expect(fixtureOnPush.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeNull();
   }));
 });
