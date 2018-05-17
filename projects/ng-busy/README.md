@@ -1,14 +1,14 @@
-**Ng Busy** can show busy/loading indicators on any promise, or on any Observable's subscription.
+**NgBusy** can show busy/loading indicators on any promise, or on any Observable's subscription.
 
 ![demo](https://raw.githubusercontent.com/devyumao/devyumao.github.io/master/angular2-busy/img/demo.gif)
 
 Rewritten from [angular2-busy](https://github.com/devyumao/angular2-busy), and add some new features in terms of Angular 2.
 
-### Built with Angular 5.0.0
+### Built with Angular 6.0.0
 
 ## Demo
 
-[https://victos.github.io/ng-busy/](https://victos.github.io/ng-busy/)
+[https://github.com/victos/angular-opensource/tree/master/projects/ng-busy/](https://github.com/victos/angular-opensource/tree/master/projects/ng-busy/)
 
 ## Installation
 
@@ -193,9 +193,6 @@ export class CustomBusyComponent {
 ```
 
 
-## TODO
-
-- Unit & E2E test
 
 ## Credits
 
