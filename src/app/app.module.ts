@@ -1,7 +1,7 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
 
-import { AppComponent } from './app.component';
+import {AppComponent} from './app.component';
 import {NgBusyDemoModule} from './modules/ng-busy-demo/ng-busy-demo.module';
 
 @NgModule({
@@ -15,4 +15,5 @@ import {NgBusyDemoModule} from './modules/ng-busy-demo/ng-busy-demo.module';
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

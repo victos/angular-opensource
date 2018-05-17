@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { OptionsComponent } from './options.component';
+import {OptionsComponent} from './options.component';
 import {FormsModule} from '@angular/forms';
 import {TemplateService} from 'src/app/modules/ng-busy-demo/service/template.service';
 
@@ -10,11 +10,11 @@ describe('OptionsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ OptionsComponent ],
+      declarations: [OptionsComponent],
       imports: [FormsModule],
       providers: [TemplateService]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

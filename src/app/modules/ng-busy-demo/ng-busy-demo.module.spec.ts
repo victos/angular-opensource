@@ -1,4 +1,4 @@
-import { NgBusyDemoModule } from './ng-busy-demo.module';
+import {NgBusyDemoModule} from './ng-busy-demo.module';
 
 describe('NgBusyDemoModule', () => {
   let ngBusyDemoModule: NgBusyDemoModule;

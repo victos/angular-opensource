@@ -2,22 +2,22 @@
 <app-header></app-header>
 
 <div class="container">
-  <div class="row">
-    <div class="col-sm-4">
-      <demo-options #options></demo-options>
+    <div class="row">
+        <div class="col-sm-4">
+            <demo-options #options></demo-options>
+        </div>
+        <div class="col-sm-offset-1 col-sm-7">
+            <app-table [loading]="options.data" #table [customTemplate]="customTemplate"></app-table>
+        </div>
     </div>
-    <div class="col-sm-offset-1 col-sm-7">
-      <app-table [loading]="options.data" #table [customTemplate]="customTemplate"></app-table>
+    <br/>
+    <div class="row">
+        <div class="col-sm-12">
+            <app-code-viewer [key]="options.templateType" [options]="options.data"></app-code-viewer>
+        </div>
     </div>
-  </div>
-  <br/>
-  <div class="row">
-    <div class="col-sm-12">
-      <app-code-viewer [key]="options.templateType" [options]="options.data"></app-code-viewer>
-    </div>
-  </div>
 
-  <ng-template #customTemplate>
-    <div style="margin-top: 110px; text-align: center;">Hi, This is from ng-template.</div>
-  </ng-template>
+    <ng-template #customTemplate>
+        <div style="margin-top: 110px; text-align: center;">Hi, This is from ng-template.</div>
+    </ng-template>
 </div>

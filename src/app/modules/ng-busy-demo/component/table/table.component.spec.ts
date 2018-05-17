@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { TableComponent } from './table.component';
+import {TableComponent} from './table.component';
 import {NgBusyModule} from 'ng-busy';
 import {TemplateService} from '../../service/template.service';
 
@@ -11,10 +11,10 @@ describe('TableComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [NgBusyModule],
-      declarations: [ TableComponent ],
+      declarations: [TableComponent],
       providers: [TemplateService]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { DemoComponent } from './demo.component';
+import {DemoComponent} from './demo.component';
 import {GithubCornerComponent} from '../github-corner/github-corner.component';
 import {HeaderComponent} from '../header/header.component';
 import {OptionsComponent} from '../options/options.component';
@@ -16,11 +16,11 @@ describe('DemoComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DemoComponent, GithubCornerComponent, HeaderComponent, OptionsComponent, CodeViewerComponent, TableComponent ],
+      declarations: [DemoComponent, GithubCornerComponent, HeaderComponent, OptionsComponent, CodeViewerComponent, TableComponent],
       imports: [FormsModule, NgBusyModule],
       providers: [TemplateService]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

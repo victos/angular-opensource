@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { CustomBusyComponentComponent } from './custom-busy-component.component';
+import {CustomBusyComponentComponent} from './custom-busy-component.component';
 
 describe('CustomBusyComponentComponent', () => {
   let component: CustomBusyComponentComponent;
@@ -8,10 +8,10 @@ describe('CustomBusyComponentComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CustomBusyComponentComponent ],
+      declarations: [CustomBusyComponentComponent],
       providers: [{provide: 'message', useValue: 'hello'}]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

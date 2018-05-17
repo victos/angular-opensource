@@ -1,7 +1,8 @@
-import { TestBed, async } from '@angular/core/testing';
-import { AppComponent } from './app.component';
+import {TestBed, async} from '@angular/core/testing';
+import {AppComponent} from './app.component';
 import {FormsModule} from '@angular/forms';
 import {NgBusyDemoModule} from './modules/ng-busy-demo/ng-busy-demo.module';
+
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({

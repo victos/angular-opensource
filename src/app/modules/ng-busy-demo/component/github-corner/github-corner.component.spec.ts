@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { GithubCornerComponent } from './github-corner.component';
+import {GithubCornerComponent} from './github-corner.component';
 
 describe('GithubCornerComponent', () => {
   let component: GithubCornerComponent;
@@ -8,9 +8,9 @@ describe('GithubCornerComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GithubCornerComponent ]
+      declarations: [GithubCornerComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

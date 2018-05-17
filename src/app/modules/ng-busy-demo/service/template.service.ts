@@ -4,8 +4,8 @@ import {OPTIONS_TEMPLATE} from '../component/custom-busy-component/custom-busy-c
 @Injectable()
 export class TemplateService {
 
-    private codeCache = {
-        'default': `@Component({
+  private codeCache = {
+    'default': `@Component({
     selector: 'default-busy',
     template: \`
         <div class="ng-busy-default-wrapper">
@@ -47,7 +47,7 @@ export class DefaultBusyComponent {
         this._changeDetectionRef.detectChanges();
     }
 }`,
-        'custom': `@Component({
+    'custom': `@Component({
     selector: 'default-busy',
     template: \`
         <div style="background: url('../assets/img/du.gif') no-repeat center 20px; background-size: 72px;">
@@ -75,29 +75,29 @@ export class CustomBusyComponent {
         this._changeDetectionRef.detectChanges();
     }
 }`,
-        'template': `<ng-template #customTemplate>
+    'template': `<ng-template #customTemplate>
     <div style="margin-top: 110px; text-align: center;">Hi, This is from ng-template.</div>
 </ng-template>`
-    };
+  };
 
-    private customTemplate: TemplateRef<any>;
+  private customTemplate: TemplateRef<any>;
 
-    getTemplate(key: string): any {
-        if ( key === 'template') {
-            return this.customTemplate;
-        }
-        if (key) {
-            return OPTIONS_TEMPLATE[key];
-        } else {
-            return OPTIONS_TEMPLATE['default'];
-        }
+  getTemplate(key: string): any {
+    if (key === 'template') {
+      return this.customTemplate;
     }
-
-    getCode(key: string): string {
-        return this.codeCache[key];
+    if (key) {
+      return OPTIONS_TEMPLATE[key];
+    } else {
+      return OPTIONS_TEMPLATE['default'];
     }
+  }
 
-    setCustomTemplate(tmpRef: TemplateRef<any>): void {
-        this.customTemplate = tmpRef;
-    }
+  getCode(key: string): string {
+    return this.codeCache[key];
+  }
+
+  setCustomTemplate(tmpRef: TemplateRef<any>): void {
+    this.customTemplate = tmpRef;
+  }
 }
