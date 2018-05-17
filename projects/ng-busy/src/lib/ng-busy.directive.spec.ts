@@ -3,7 +3,7 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 import {BusyTrackerService} from './service/busy-tracker.service';
 import {BusyConfigHolderService} from './service/busy-config-holder.service';
 import {
-  ApplicationRef, ChangeDetectorRef,
+  ApplicationRef, ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   DebugElement,
   ElementRef, Inject,
@@ -67,6 +67,15 @@ class TestNgBusyComponent {
   options: any;
   @ViewChild('customTemplate')
   customTemplate: TemplateRef<any>;
+}
+
+@Component({
+  template: `
+      <div class="ng-busy-container-for-test" [ngBusy]="options"></div>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+class TestNgBusyComponentOnPush {
+  options: any;
 }
 
 describe('NgBusyDirective', () => {
@@ -177,5 +186,16 @@ describe('NgBusyDirective', () => {
     tick(701);
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy>.content_class_component'))).toBeNull();
+  }));
+
+  it('should work as expected when use ChangeDetectionStrategy.OnPush', fakeAsync(() => {
+    component.options = createPromiseWithDelay(1000);
+    fixture.detectChanges();
+    tick(300);
+    fixture.detectChanges();
+    expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeDefined();
+    tick(701);
+    fixture.detectChanges();
+    expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeNull();
   }));
 });
