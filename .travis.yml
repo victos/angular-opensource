@@ -31,6 +31,7 @@ before_install:
 install:
   - yarn install
 script:
+  - ng build ng-busy --prod
   - ng test
   - ng e2e
 notifications:
