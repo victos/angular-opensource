@@ -32,7 +32,6 @@ script:
   - ng test ng-busy
   - ng build ng-busy --prod
   - ng test angular-opensource
-  - ng e2e
 notifications:
   webhooks:
     on_success: change
