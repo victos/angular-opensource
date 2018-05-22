@@ -1,12 +1,14 @@
 {
   "name": "ng-busy",
-  "version": "6.0.0-Alpha0",
+  "version": "6.0.0-Alpha1",
   "description": "Show busy/loading indicators on any promise or subscription",
   "author": "victos",
   "license": "MIT",
   "scripts": {
-    "build": "ng build ng-busy",
-    "postbuild": "lessc src/lib/style/busy.less ../../dist/ng-busy/src/style/busy.css"
+    "prebuild": "rimraf ../../dist/ng-busy",
+    "build": "ng build ng-busy --prod",
+    "postbuild": "lessc src/lib/style/busy.less ../../dist/ng-busy/src/style/busy.css",
+    "publish": "npm publish ../../dist/ng-busy"
   },
   "repository": {
     "type": "git",
@@ -34,13 +36,15 @@
     "rxjs": "^6.0.0"
   },
   "peerDependencies": {
-    "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
-    "@angular/core": "^6.0.0-rc.0 || ^6.0.0",
+    "@angular/common": "^5.0.0 || ^6.0.0-rc.0 || ^6.0.0",
+    "@angular/core": "^5.0.0 || ^6.0.0-rc.0 || ^6.0.0",
+    "@angular/animations": "^5.0.0 || ^6.0.0-rc.0 || ^6.0.0",
     "rxjs": "^6.0.0"
   },
   "dependencies": {
-    "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
-    "@angular/core": "^6.0.0-rc.0 || ^6.0.0",
+    "@angular/common": "^5.0.0 || ^6.0.0-rc.0 || ^6.0.0",
+    "@angular/core": "^5.0.0 || ^6.0.0-rc.0 || ^6.0.0",
+    "@angular/animations": "^5.0.0 || ^6.0.0-rc.0 || ^6.0.0",
     "rxjs": "^6.0.0"
   }
 }

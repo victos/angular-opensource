@@ -2,7 +2,6 @@ import {ChangeDetectorRef, Component, Inject, OnDestroy} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {Subscription} from 'rxjs/internal/Subscription';
 import {BusyTrackerService} from '../../service/busy-tracker.service';
-import {BusyConfigHolderService} from '../../service/busy-config-holder.service';
 
 const inactiveStyle = style({
   opacity: 0,
