@@ -1,16 +1,20 @@
 {
   "name": "ng-busy",
-  "version": "2.0.0",
+  "version": "6.0.0-Alpha0",
   "description": "Show busy/loading indicators on any promise or subscription",
   "author": "victos",
   "license": "MIT",
+  "scripts": {
+    "build": "ng build ng-busy",
+    "postbuild": "lessc src/lib/style/busy.less ../../dist/ng-busy/src/style/busy.css"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/victos/ng-busy.git"
+    "url": "git+https://github.com/victos/angular-opensource.git"
   },
-  "homepage": "https://github.com/victos/ng-busy",
+  "homepage": "https://github.com/victos/angular-opensource/tree/master/projects/ng-busy",
   "bugs": {
-    "url": "https://github.com/victos/ng-busy"
+    "url": "https://github.com/victos/angular-opensource"
   },
   "keywords": [
     "angular",
@@ -26,9 +30,15 @@
   ],
   "engines": {
     "node": ">= 8.0.0",
-    "npm": ">= 5.6.0"
+    "npm": ">= 5.6.0",
+    "rxjs": "^6.0.0"
   },
   "peerDependencies": {
+    "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
+    "@angular/core": "^6.0.0-rc.0 || ^6.0.0",
+    "rxjs": "^6.0.0"
+  },
+  "dependencies": {
     "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
     "@angular/core": "^6.0.0-rc.0 || ^6.0.0",
     "rxjs": "^6.0.0"

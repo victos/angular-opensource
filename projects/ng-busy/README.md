@@ -1,3 +1,9 @@
+**Notice**
+
+1.x version is used for angular 5.x
+
+6.x version is used for angular 6.x, and this version is **not** ready for release
+
 **NgBusy** can show busy/loading indicators on any promise, or on any Observable's subscription.
 
 ![demo](https://raw.githubusercontent.com/devyumao/devyumao.github.io/master/angular2-busy/img/demo.gif)
