@@ -8,7 +8,7 @@
     "prebuild": "rimraf ../../dist/ng-busy",
     "build": "ng build ng-busy --prod",
     "postbuild": "lessc src/lib/style/busy.less ../../dist/ng-busy/src/style/busy.css",
-    "publish": "npm publish ../../dist/ng-busy"
+    "publish": "npm run build && npm publish ../../dist/ng-busy"
   },
   "repository": {
     "type": "git",
