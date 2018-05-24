@@ -18,6 +18,7 @@ import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/tes
 import {DefaultBusyComponent} from './model/busy-config';
 import {NgBusyBackdropComponent} from './component/ng-busy-backdrop/ng-busy-backdrop.component';
 import {NgBusyComponent} from './component/ng-busy/ng-busy.component';
+import {Subscription, Observable} from 'rxjs';
 
 const createPromiseWithDelay = (delay: number): Promise<any> => {
   return new Promise((resolve) => {
@@ -25,6 +26,15 @@ const createPromiseWithDelay = (delay: number): Promise<any> => {
       resolve();
     }, delay);
   });
+};
+
+const createSubscriptionWithDelay = (delay: number): Subscription => {
+  return Observable.create((o) => {
+    setTimeout(() => {
+      o.next();
+      o.complete();
+    }, delay);
+  }).subscribe(() => {});
 };
 
 @Component({
@@ -126,6 +136,18 @@ describe('NgBusyDirective', () => {
     };
     fixture.detectChanges();
     expect(compiled.querySelector('lib-ng-busy-backdrop')).toBeNull();
+  }));
+
+  it('should work as expected when use Subscription as busyOption', fakeAsync(() => {
+    const service = TestBed.get(BusyTrackerService);
+    component.options = createSubscriptionWithDelay(1000);
+    fixture.detectChanges();
+    tick(300);
+    fixture.detectChanges();
+    expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeDefined();
+    tick(701);
+    fixture.detectChanges();
+    expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeNull();
   }));
 
   it('should load default template when there is a busy and no template configured', fakeAsync(() => {

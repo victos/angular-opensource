@@ -14,7 +14,7 @@ import {equals} from './tools/util';
 import {ViewRef} from '@angular/core/src/linker/view_ref';
 import {BusyTrackerService} from './service/busy-tracker.service';
 import {BusyConfigHolderService} from './service/busy-config-holder.service';
-import {Subscription} from 'rxjs/index';
+import {Subscription} from 'rxjs';
 import {IBusyConfig} from './model/busy-config';
 import {NgBusyComponent} from './component/ng-busy/ng-busy.component';
 import {NgBusyBackdropComponent} from './component/ng-busy-backdrop/ng-busy-backdrop.component';
@@ -52,7 +52,6 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
     if (!this.isOptionsChanged()) {
       return;
     }
-
     if (!equals(options.busy, this.tracker.busyList)) {
       this.tracker.load({
         busyList: options.busy,
