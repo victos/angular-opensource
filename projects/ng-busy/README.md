@@ -7,7 +7,7 @@
 **NgBusy** can show busy/loading indicators on any promise, or on any Observable's subscription.
 
 [![Travis](https://img.shields.io/travis/victos/angular-opensource/master.svg?label=Travis%20CI&style=flat-square)](https://travis-ci.org/victos/angular-opensource)
-[![npm Downloads](https://img.shields.io/npm/dw/ng-busy.svg?style=flat-square)](https://www.npmjs.com/package/angular-opensource)
+[![npm Downloads](https://img.shields.io/npm/dw/ng-busy.svg?style=flat-square)](https://www.npmjs.com/package/ng-busy)
 
 ![demo](https://raw.githubusercontent.com/devyumao/devyumao.github.io/master/angular2-busy/img/demo.gif)
 
