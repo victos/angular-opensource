@@ -2,7 +2,7 @@
 
 1.x version is used for angular 5.x
 
-6.x version is used for angular 6.x, and this version is **not** ready for release
+6.x version is used for angular 6.x
 
 **NgBusy** can show busy/loading indicators on any promise, or on any Observable's subscription.
 
