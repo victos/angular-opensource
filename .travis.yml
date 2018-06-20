@@ -31,7 +31,7 @@ install:
 script:
   - ng test ng-busy --watch=false
   - ng build ng-busy --prod
-  - ng test angular-opensource --watch=false
+#  - ng test angular-opensource --watch=false
 notifications:
   webhooks:
     on_success: change
