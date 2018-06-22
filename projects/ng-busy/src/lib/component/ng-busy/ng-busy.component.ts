@@ -1,7 +1,6 @@
-import {ChangeDetectorRef, Component, Inject, OnDestroy} from '@angular/core';
+import {Component, EventEmitter, Inject, OnDestroy} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {Subscription} from 'rxjs/internal/Subscription';
-import {BusyTrackerService} from '../../service/busy-tracker.service';
 
 const inactiveStyle = style({
   opacity: 0,
@@ -28,27 +27,23 @@ const timing = '.3s ease';
 export class NgBusyComponent implements OnDestroy {
 
   public wrapperClass: string;
-  sub: Subscription = new Subscription();
-
-  get isActive(): boolean {
-    return this.tracker.isActive;
-  }
+  private readonly busyMonitor: Subscription;
+  isActive = false;
 
   constructor(
     @Inject('busyConfig') private config: any,
-    private tracker: BusyTrackerService,
-    private readonly cdr: ChangeDetectorRef
+    @Inject('busyEmitter') private busyEmitter: EventEmitter<boolean>
   ) {
     this.wrapperClass = this.config.wrapperClass;
-    this.sub.add(this.tracker.onCheckPending.subscribe(() => {
-      if (this.cdr) {
-        this.cdr.markForCheck();
-      }
-    }));
+    this.busyMonitor = this.busyEmitter.subscribe((isActive: boolean) => {
+      this.isActive = isActive;
+    });
   }
 
   ngOnDestroy(): void {
-    this.sub.unsubscribe();
+    if (this.busyMonitor) {
+      this.busyMonitor.unsubscribe();
+    }
   }
 
 }

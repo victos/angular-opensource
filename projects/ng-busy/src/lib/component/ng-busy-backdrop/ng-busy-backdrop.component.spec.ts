@@ -1,18 +1,17 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NgBusyBackdropComponent } from './ng-busy-backdrop.component';
-import {BusyTrackerService} from '../../service/busy-tracker.service';
+import {EventEmitter} from '@angular/core';
 
 describe('NgBusyBackdropComponent', () => {
   let component: NgBusyBackdropComponent;
   let fixture: ComponentFixture<NgBusyBackdropComponent>;
-  let tracker: BusyTrackerService;
+  let busyEmitter: EventEmitter<boolean>;
 
   beforeEach(async(() => {
-    tracker = new BusyTrackerService();
     TestBed.configureTestingModule({
       declarations: [ NgBusyBackdropComponent ],
-      providers: [{provide: BusyTrackerService, useValue: tracker}]
+      providers: [{provide: 'busyEmitter', useValue: new EventEmitter<boolean>()}]
     })
     .compileComponents();
   }));
@@ -21,6 +20,7 @@ describe('NgBusyBackdropComponent', () => {
     fixture = TestBed.createComponent(NgBusyBackdropComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    busyEmitter = TestBed.get('busyEmitter');
   });
 
   it('should create', () => {
@@ -35,14 +35,14 @@ describe('NgBusyBackdropComponent', () => {
 
   it('should be empty if isActive is false', async(() => {
     // spy = spyOn(tracker, 'isActive').and.returnValue(false);
-    tracker['__isActive'] = false;
+    busyEmitter.emit(false);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('.ng-busy-backdrop')).toBeNull();
   }));
 
   it('div.ng-busy-backdrop should be load if isActive is true', async(() => {
-    tracker['__isActive'] = true;
+    busyEmitter.emit(true);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('div.ng-busy-backdrop')).toBeDefined();
@@ -50,16 +50,16 @@ describe('NgBusyBackdropComponent', () => {
 
   it('div.ng-busy-backdrop should be load by the change of isActive', async(() => {
     const compiled = fixture.debugElement.nativeElement;
-    tracker['__isActive'] = true;
+    busyEmitter.emit(true);
     fixture.detectChanges();
     expect(compiled.querySelector('div.ng-busy-backdrop')).toBeDefined();
-    tracker['__isActive'] = false;
+    busyEmitter.emit(false);
     fixture.detectChanges();
     expect(compiled.querySelector('div.ng-busy-backdrop')).toBeNull();
-    tracker['__isActive'] = true;
+    busyEmitter.emit(true);
     fixture.detectChanges();
     expect(compiled.querySelector('div.ng-busy-backdrop')).toBeDefined();
-    tracker['__isActive'] = false;
+    busyEmitter.emit(false);
     fixture.detectChanges();
     expect(compiled.querySelector('div.ng-busy-backdrop')).toBeNull();
   }));

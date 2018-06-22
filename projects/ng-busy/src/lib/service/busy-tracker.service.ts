@@ -19,8 +19,8 @@ export class BusyTrackerService implements OnDestroy {
   private onDelayDone: EventEmitter<any> = new EventEmitter<any>();
   private onMinDurationDone: EventEmitter<any> = new EventEmitter<any>();
 
-  onStartBusy: EventEmitter<any>;
-  onStopBusy: EventEmitter<any>;
+  onStartBusy: EventEmitter<any> = new EventEmitter();
+  onStopBusy: EventEmitter<any> = new EventEmitter();
   onCheckPending = new EventEmitter();
 
   get isUpdateActiveStatusAllowedToRun(): boolean {

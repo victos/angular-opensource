@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, Inject, OnDestroy, OnInit} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {BusyTrackerService} from '../../service/busy-tracker.service';
+import {Subscription} from 'rxjs/internal/Subscription';
 
 const inactiveStyle = style({
   opacity: 0
@@ -23,15 +24,21 @@ const timing = '.3s ease';
     ])
   ]
 })
-export class NgBusyBackdropComponent implements OnInit {
+export class NgBusyBackdropComponent implements OnDestroy {
 
-  get isActive(): boolean {
-    return this.tracker.isActive;
+  private readonly busyMonitor: Subscription;
+  isActive = false;
+
+  constructor(@Inject('busyEmitter') private busyEmitter: EventEmitter<boolean>) {
+    this.busyMonitor = this.busyEmitter.subscribe((isActive: boolean) => {
+      this.isActive = isActive;
+    });
   }
 
-  constructor(private tracker: BusyTrackerService) { }
-
-  ngOnInit() {
+  ngOnDestroy(): void {
+    if (this.busyMonitor) {
+      this.busyMonitor.unsubscribe();
+    }
   }
 
 }

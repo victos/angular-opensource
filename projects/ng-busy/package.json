@@ -1,6 +1,6 @@
 {
   "name": "ng-busy",
-  "version": "6.0.0-rc1",
+  "version": "6.0.0-rc2",
   "description": "Show busy/loading indicators on any promise or subscription",
   "author": "victos",
   "license": "MIT",

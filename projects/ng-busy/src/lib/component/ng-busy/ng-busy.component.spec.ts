@@ -1,9 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NgBusyComponent } from './ng-busy.component';
-import {BusyTrackerService} from '../../service/busy-tracker.service';
 import {BusyConfigHolderService} from '../../service/busy-config-holder.service';
-import {ChangeDetectorRef, ElementRef} from '@angular/core';
+import {ChangeDetectorRef, ElementRef, EventEmitter} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 export class MockElementRef extends ElementRef {}
@@ -11,11 +10,10 @@ export class MockElementRef extends ElementRef {}
 describe('NgBusyComponent', () => {
   let component: NgBusyComponent;
   let fixture: ComponentFixture<NgBusyComponent>;
-  let tracker: BusyTrackerService;
+  let busyEmitter: EventEmitter<boolean>;
   let configHolder: BusyConfigHolderService;
 
   beforeEach(async(() => {
-    tracker = new BusyTrackerService();
     configHolder = new BusyConfigHolderService({
       wrapperClass: 'the_actual_class',
       template: MockElementRef,
@@ -27,8 +25,8 @@ describe('NgBusyComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ NgBusyComponent ],
       imports: [BrowserAnimationsModule],
-      providers: [{provide: BusyTrackerService, useValue: tracker}, BusyConfigHolderService, ChangeDetectorRef,
-        {provide: 'busyConfig', useValue: configHolder}]
+      providers: [BusyConfigHolderService, ChangeDetectorRef,
+        {provide: 'busyConfig', useValue: configHolder}, {provide: 'busyEmitter', useValue: new EventEmitter<boolean>()}]
     })
     .compileComponents();
   }));
@@ -37,6 +35,7 @@ describe('NgBusyComponent', () => {
     fixture = TestBed.createComponent(NgBusyComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    busyEmitter = TestBed.get('busyEmitter');
   });
 
   it('should create', () => {
@@ -50,14 +49,14 @@ describe('NgBusyComponent', () => {
   }));
 
   it('should be empty if isActive is false', async(() => {
-    tracker['__isActive'] = false;
+    busyEmitter.emit(false);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('.the_actual_class')).toBeNull();
   }));
 
   it('div.the_actual_class should be load if isActive is true', async(() => {
-    tracker['__isActive'] = true;
+    busyEmitter.emit(true);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('div.the_actual_class')).toBeDefined();
@@ -65,16 +64,16 @@ describe('NgBusyComponent', () => {
 
   it('div.the_actual_class should be load by the change of isActive', async(() => {
     const compiled = fixture.debugElement.nativeElement;
-    tracker['__isActive'] = true;
+    busyEmitter.emit(true);
     fixture.detectChanges();
     expect(compiled.querySelector('div.the_actual_class')).toBeDefined();
-    tracker['__isActive'] = false;
+    busyEmitter.emit(false);
     fixture.detectChanges();
     expect(compiled.querySelector('div.the_actual_class')).toBeNull();
-    tracker['__isActive'] = true;
+    busyEmitter.emit(true);
     fixture.detectChanges();
     expect(compiled.querySelector('div.the_actual_class')).toBeDefined();
-    tracker['__isActive'] = false;
+    busyEmitter.emit(false);
     fixture.detectChanges();
     expect(compiled.querySelector('div.the_actual_class')).toBeNull();
   }));
