@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, OnDestroy} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Inject, OnDestroy} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {Subscription} from 'rxjs/internal/Subscription';
 
@@ -32,11 +32,15 @@ export class NgBusyComponent implements OnDestroy {
 
   constructor(
     @Inject('busyConfig') private config: any,
-    @Inject('busyEmitter') private busyEmitter: EventEmitter<boolean>
+    @Inject('busyEmitter') private busyEmitter: EventEmitter<boolean>,
+    private readonly cdr: ChangeDetectorRef
   ) {
     this.wrapperClass = this.config.wrapperClass;
     this.busyMonitor = this.busyEmitter.subscribe((isActive: boolean) => {
       this.isActive = isActive;
+      if (this.cdr) {
+        this.cdr.markForCheck();
+      }
     });
   }
 

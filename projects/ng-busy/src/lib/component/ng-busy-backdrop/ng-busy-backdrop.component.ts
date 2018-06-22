@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Inject, OnDestroy, OnInit} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {BusyTrackerService} from '../../service/busy-tracker.service';
 import {Subscription} from 'rxjs/internal/Subscription';
@@ -29,9 +29,13 @@ export class NgBusyBackdropComponent implements OnDestroy {
   private readonly busyMonitor: Subscription;
   isActive = false;
 
-  constructor(@Inject('busyEmitter') private busyEmitter: EventEmitter<boolean>) {
+  constructor(@Inject('busyEmitter') private busyEmitter: EventEmitter<boolean>,
+              private readonly cdr: ChangeDetectorRef) {
     this.busyMonitor = this.busyEmitter.subscribe((isActive: boolean) => {
       this.isActive = isActive;
+      if (this.cdr) {
+        this.cdr.markForCheck();
+      }
     });
   }
 
