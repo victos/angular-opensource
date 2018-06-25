@@ -158,7 +158,6 @@ describe('NgBusyDirective', () => {
     fixture.detectChanges();
     tick(300);
     fixture.detectChanges();
-    console.log(fixture.debugElement.nativeElement)
     expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).not.toBeNull();
     tick(701);
     fixture.detectChanges();
@@ -195,6 +194,42 @@ describe('NgBusyDirective', () => {
     tick(701);
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy>.content_class'))).toBeNull();
+  }));
+
+  it('not affect each other when there many busies', fakeAsync(() => {
+    const fixture1 = TestBed.createComponent(TestNgBusyComponent);
+    const component1 = fixture1.componentInstance;
+    component.options = {
+      busy: createPromiseWithDelay(1000),
+      template: 'hello',
+      wrapperClass: 'content_class'
+    };
+    fixture.detectChanges();
+    fixture1.detectChanges();
+    tick(300);
+    fixture.detectChanges();
+    fixture1.detectChanges();
+    expect(fixture.debugElement.query(By.css('lib-ng-busy>.content_class')).nativeElement.textContent)
+      .toBe('hello');
+    expect(fixture1.debugElement.query(By.css('lib-ng-busy>.content_class'))).toBeNull();
+    expect(fixture1.debugElement.query(By.css('lib-ng-busy>.another_content_class'))).toBeNull();
+    component1.options = {
+      busy: createPromiseWithDelay(1000),
+      template: 'I\'m from another busy',
+      wrapperClass: 'another_content_class'
+    };
+    tick(701);
+    fixture.detectChanges();
+    fixture1.detectChanges();
+    expect(fixture.debugElement.query(By.css('lib-ng-busy>.content_class'))).toBeNull();
+    expect(fixture1.debugElement.query(By.css('lib-ng-busy>.another_content_class')).nativeElement.textContent)
+      .toBe('I\'m from another busy');
+    tick(300);
+    fixture.detectChanges();
+    fixture1.detectChanges();
+    expect(fixture.debugElement.query(By.css('lib-ng-busy>.content_class'))).toBeNull();
+    expect(fixture1.debugElement.query(By.css('lib-ng-busy>.content_class'))).toBeNull();
+    expect(fixture1.debugElement.query(By.css('lib-ng-busy>.another_content_class'))).toBeNull();
   }));
 
   it('component typed template', fakeAsync(() => {
