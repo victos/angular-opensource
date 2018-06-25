@@ -1,6 +1,5 @@
-import {ChangeDetectorRef, Component, EventEmitter, Inject, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Inject, OnDestroy} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
-import {BusyTrackerService} from '../../service/busy-tracker.service';
 import {Subscription} from 'rxjs/internal/Subscription';
 
 const inactiveStyle = style({

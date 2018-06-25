@@ -4,7 +4,7 @@ import {
   Directive, DoCheck,
   ElementRef,
   EventEmitter, Injector,
-  Input, OnDestroy, OnInit,
+  Input, OnDestroy,
   Output,
   Renderer2,
   TemplateRef, Type,

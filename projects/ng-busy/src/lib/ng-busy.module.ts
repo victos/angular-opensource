@@ -1,5 +1,5 @@
 import {ModuleWithProviders, NgModule} from '@angular/core';
-import {BUSY_CONFIG_DEFAULTS, BusyConfig, DefaultBusyComponent, IBusyConfig} from './model/busy-config';
+import {BusyConfig, DefaultBusyComponent, IBusyConfig} from './model/busy-config';
 import {CommonModule} from '@angular/common';
 import {BusyTrackerService} from './service/busy-tracker.service';
 import {BusyConfigHolderService} from './service/busy-config-holder.service';
