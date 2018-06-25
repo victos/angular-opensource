@@ -16,11 +16,10 @@ import {NgBusyBackdropComponent} from './component/ng-busy-backdrop/ng-busy-back
 })
 export class NgBusyModule {
   static forRoot(config: IBusyConfig): ModuleWithProviders {
-    const conf = Object.assign(BUSY_CONFIG_DEFAULTS, config);
     return {
       ngModule: NgBusyModule,
       providers: [
-        {provide: BusyConfig, useValue: conf}
+        {provide: BusyConfig, useValue: config}
       ]
     };
   }
