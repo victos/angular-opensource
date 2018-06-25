@@ -34,7 +34,6 @@ describe('NgBusyBackdropComponent', () => {
   }));
 
   it('should be empty if isActive is false', async(() => {
-    // spy = spyOn(tracker, 'isActive').and.returnValue(false);
     busyEmitter.emit(false);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
@@ -45,20 +44,20 @@ describe('NgBusyBackdropComponent', () => {
     busyEmitter.emit(true);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('div.ng-busy-backdrop')).toBeDefined();
+    expect(compiled.querySelector('div.ng-busy-backdrop')).not.toBeNull();
   }));
 
   it('div.ng-busy-backdrop should be load by the change of isActive', async(() => {
     const compiled = fixture.debugElement.nativeElement;
     busyEmitter.emit(true);
     fixture.detectChanges();
-    expect(compiled.querySelector('div.ng-busy-backdrop')).toBeDefined();
+    expect(compiled.querySelector('div.ng-busy-backdrop')).not.toBeNull();
     busyEmitter.emit(false);
     fixture.detectChanges();
     expect(compiled.querySelector('div.ng-busy-backdrop')).toBeNull();
     busyEmitter.emit(true);
     fixture.detectChanges();
-    expect(compiled.querySelector('div.ng-busy-backdrop')).toBeDefined();
+    expect(compiled.querySelector('div.ng-busy-backdrop')).not.toBeNull();
     busyEmitter.emit(false);
     fixture.detectChanges();
     expect(compiled.querySelector('div.ng-busy-backdrop')).toBeNull();

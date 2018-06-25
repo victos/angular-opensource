@@ -86,6 +86,7 @@ class TestNgBusyComponent {
 })
 class TestNgBusyComponentOnPush {
   options: any;
+  constructor(public cdr: ChangeDetectorRef) {}
 }
 
 describe('NgBusyDirective', () => {
@@ -97,7 +98,9 @@ describe('NgBusyDirective', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TestNgBusyComponent, CustomBusyComponent, TestNgBusyComponentOnPush],
-      imports: [NgBusyModule, BrowserAnimationsModule],
+      imports: [NgBusyModule.forRoot({
+        wrapperClass: 'for_root_class'
+      }), BrowserAnimationsModule],
       providers: [BusyConfigHolderService, BusyTrackerService,
         ApplicationRef, ViewContainerRef, {provide: ElementRef, useValue: mockElementRef}, Renderer2, Injector]
     });
@@ -121,7 +124,7 @@ describe('NgBusyDirective', () => {
     const compiled = fixture.debugElement.nativeElement;
     component.options = undefined;
     fixture.detectChanges();
-    expect(compiled.querySelector('lib-ng-busy')).toBeDefined();
+    expect(compiled.querySelector('lib-ng-busy')).not.toBeNull();
   }));
 
   it('should create lib-ng-busy-backdrop accordingly after init the NgBusyDirective by the setting of option backdrop ', async(() => {
@@ -130,7 +133,7 @@ describe('NgBusyDirective', () => {
       backdrop: true
     };
     fixture.detectChanges();
-    expect(compiled.querySelector('lib-ng-busy-backdrop')).toBeDefined();
+    expect(compiled.querySelector('lib-ng-busy-backdrop')).not.toBeNull();
     component.options = {
       backdrop: false
     };
@@ -144,7 +147,7 @@ describe('NgBusyDirective', () => {
     fixture.detectChanges();
     tick(300);
     fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeDefined();
+    expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).not.toBeNull();
     tick(701);
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeNull();
@@ -155,7 +158,8 @@ describe('NgBusyDirective', () => {
     fixture.detectChanges();
     tick(300);
     fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeDefined();
+    console.log(fixture.debugElement.nativeElement)
+    expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).not.toBeNull();
     tick(701);
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeNull();
@@ -215,11 +219,12 @@ describe('NgBusyDirective', () => {
     const componentOnPush: TestNgBusyComponentOnPush = fixtureOnPush.componentInstance;
     mockElementRef.nativeElement = fixtureOnPush.elementRef.nativeElement;
     fixtureOnPush.detectChanges();
-    componentOnPush.options = createPromiseWithDelay(1000);
+    componentOnPush.options = createSubscriptionWithDelay(1000);
+    componentOnPush.cdr.markForCheck();
     fixtureOnPush.detectChanges();
     tick(300);
     fixtureOnPush.detectChanges();
-    expect(fixtureOnPush.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeDefined();
+    expect(fixtureOnPush.debugElement.query(By.css('lib-ng-busy default-busy'))).not.toBeNull();
     tick(701);
     fixtureOnPush.detectChanges();
     expect(fixtureOnPush.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeNull();
