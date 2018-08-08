@@ -50,10 +50,12 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
     this.onStartSubscription = tracker.onStartBusy.subscribe(() => {
       this.isLoading = true;
       this.busyEmitter.emit(this.isLoading);
+      this.busyStart.emit();
     });
     this.onStopSubscription = tracker.onStopBusy.subscribe(() => {
       this.isLoading = false;
       this.busyEmitter.emit(this.isLoading);
+      this.busyStop.emit();
     });
   }
 
