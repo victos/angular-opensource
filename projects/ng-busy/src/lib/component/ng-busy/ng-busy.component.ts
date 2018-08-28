@@ -1,6 +1,8 @@
 import {ChangeDetectorRef, Component, EventEmitter, Inject, OnDestroy} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {Subscription} from 'rxjs/internal/Subscription';
+import {NgBusyDirective} from '../../ng-busy.directive';
+import {InstanceConfigHolderService} from '../../service/instance-config-holder.service';
 
 const inactiveStyle = style({
   opacity: 0,
@@ -27,17 +29,22 @@ const timing = '.3s ease';
 export class NgBusyComponent implements OnDestroy {
 
   public wrapperClass: string;
+  public disableAnimation = false;
+  public showBackdrop = true;
   private readonly busyMonitor: Subscription;
   isActive = false;
 
   constructor(
-    @Inject('busyConfig') private config: any,
+    @Inject('instanceConfigHolder') private instanceConfigHolder: InstanceConfigHolderService,
     @Inject('busyEmitter') private busyEmitter: EventEmitter<boolean>,
     private readonly cdr: ChangeDetectorRef
   ) {
-    this.wrapperClass = this.config.wrapperClass;
     this.busyMonitor = this.busyEmitter.subscribe((isActive: boolean) => {
+      const config = this.instanceConfigHolder.config;
       this.isActive = isActive;
+      this.wrapperClass = config.wrapperClass;
+      this.showBackdrop = config.backdrop;
+      this.disableAnimation = config.disableAnimation;
       if (this.cdr) {
         this.cdr.markForCheck();
       }

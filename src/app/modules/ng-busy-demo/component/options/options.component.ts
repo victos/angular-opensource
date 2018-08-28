@@ -36,6 +36,10 @@ export class OptionsComponent {
     this.data.backdrop = element.checked;
   }
 
+  disableAnimation(element: HTMLInputElement) {
+    this.data.disableAnimation = element.checked;
+  }
+
   playDemo() {
     const busies = [];
     const promise = new Promise(resolve => {

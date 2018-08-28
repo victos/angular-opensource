@@ -5,6 +5,8 @@ import {BusyConfigHolderService} from '../../service/busy-config-holder.service'
 import {ChangeDetectorRef, ElementRef, EventEmitter} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {By} from '@angular/platform-browser';
+import {InstanceConfigHolderService} from '../../service/instance-config-holder.service';
+import {DefaultBusyComponent} from '../../model/busy-config';
 
 export class MockElementRef extends ElementRef {}
 
@@ -12,20 +14,23 @@ describe('NgBusyComponent', () => {
   let component: NgBusyComponent;
   let fixture: ComponentFixture<NgBusyComponent>;
   let busyEmitter: EventEmitter<boolean>;
+  const instanceConfig: InstanceConfigHolderService = new InstanceConfigHolderService();
 
   beforeEach(async(() => {
+    instanceConfig.config = {
+        wrapperClass: 'the_actual_class',
+        template: MockElementRef,
+        delay: 0,
+        minDuration: 0,
+        backdrop: false,
+        message: 'the_actual_msg'
+    };
     TestBed.configureTestingModule({
       declarations: [ NgBusyComponent ],
       imports: [BrowserAnimationsModule],
       providers: [BusyConfigHolderService, ChangeDetectorRef,
-        {provide: 'busyConfig', useValue: {
-            wrapperClass: 'the_actual_class',
-            template: MockElementRef,
-            delay: 0,
-            minDuration: 0,
-            backdrop: false,
-            message: 'the_actual_msg'
-          }}, {provide: 'busyEmitter', useValue: new EventEmitter<boolean>()}]
+        {provide: 'busyEmitter', useValue: new EventEmitter<boolean>()},
+        {provide: 'instanceConfigHolder', useValue: instanceConfig}]
     })
     .compileComponents();
   }));

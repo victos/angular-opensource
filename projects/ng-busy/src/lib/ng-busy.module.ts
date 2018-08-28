@@ -5,14 +5,13 @@ import {BusyTrackerService} from './service/busy-tracker.service';
 import {BusyConfigHolderService} from './service/busy-config-holder.service';
 import {NgBusyDirective} from './ng-busy.directive';
 import {NgBusyComponent} from './component/ng-busy/ng-busy.component';
-import {NgBusyBackdropComponent} from './component/ng-busy-backdrop/ng-busy-backdrop.component';
 
 @NgModule({
   imports: [CommonModule],
-  declarations: [DefaultBusyComponent, NgBusyDirective, NgBusyComponent, NgBusyBackdropComponent],
+  declarations: [DefaultBusyComponent, NgBusyDirective, NgBusyComponent],
   providers: [BusyConfigHolderService, BusyTrackerService],
   exports: [NgBusyDirective],
-  entryComponents: [DefaultBusyComponent, NgBusyBackdropComponent, NgBusyComponent]
+  entryComponents: [DefaultBusyComponent, NgBusyComponent]
 })
 export class NgBusyModule {
   static forRoot(config: IBusyConfig): ModuleWithProviders {

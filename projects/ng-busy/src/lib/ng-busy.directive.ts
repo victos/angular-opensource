@@ -17,29 +17,35 @@ import {BusyConfigHolderService} from './service/busy-config-holder.service';
 import {Subscription} from 'rxjs';
 import {IBusyConfig} from './model/busy-config';
 import {NgBusyComponent} from './component/ng-busy/ng-busy.component';
-import {NgBusyBackdropComponent} from './component/ng-busy-backdrop/ng-busy-backdrop.component';
+import {InstanceConfigHolderService} from './service/instance-config-holder.service';
 
 @Directive({
   selector: '[ngBusy]',
-  providers: [ BusyTrackerService ]
+  providers: [ BusyTrackerService, InstanceConfigHolderService ]
 })
 export class NgBusyDirective implements DoCheck, OnDestroy {
-  @Input('ngBusy') options: any;
+  @Input('ngBusy')
+  set options(op) {
+    this._option = op;
+  }
+  get options() {
+    return this._option;
+  }
   @Output() busyStart = new EventEmitter();
   @Output() busyStop = new EventEmitter();
   private optionsRecorded: IBusyConfig;
   private optionsNorm: IBusyConfig;
   private busyRef: ComponentRef<NgBusyComponent>;
-  private backdropRef: ComponentRef<NgBusyBackdropComponent>;
   private componentViewRef: ViewRef;
   private onStartSubscription: Subscription;
   private onStopSubscription: Subscription;
   private isLoading = false;
   private busyEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
   public template: TemplateRef<any> | Type<any>;
-  public backdrop: boolean;
+  private _option: any;
 
   constructor(private configHolder: BusyConfigHolderService,
+              private instanceConfigHolder: InstanceConfigHolderService,
               private resolver: ComponentFactoryResolver,
               private tracker: BusyTrackerService,
               private appRef: ApplicationRef,
@@ -48,6 +54,7 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
               private renderer: Renderer2,
               private injector: Injector) {
     this.onStartSubscription = tracker.onStartBusy.subscribe(() => {
+      this.recreateBusyIfNecessary();
       this.isLoading = true;
       this.busyEmitter.emit(this.isLoading);
       this.busyStart.emit();
@@ -65,6 +72,7 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
     if (!this.isOptionsChanged()) {
       return;
     }
+    this.instanceConfigHolder.config = this.optionsNorm;
     if (!equals(options.busy, this.tracker.busyList)) {
       this.tracker.load({
         busyList: options.busy,
@@ -72,29 +80,23 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
         minDuration: options.minDuration
       });
     }
-
-    if (!this.busyRef
-      || this.template !== options.template
-      || this.backdrop !== options.backdrop
-    ) {
-      this.destroyComponents();
-
-      this.template = options.template;
-      this.backdrop = options.backdrop;
-
-      if (options.backdrop) {
-        this.createBackdrop();
-      }
-
-      this.createBusy();
-      this.busyEmitter.emit(this.isLoading);
-    }
   }
 
   ngOnDestroy() {
     this.destroyComponents();
     this.onStartSubscription.unsubscribe();
     this.onStopSubscription.unsubscribe();
+  }
+
+  private recreateBusyIfNecessary() {
+      if (!this.busyRef
+          || this.template !== this.optionsNorm.template
+      ) {
+          this.destroyComponents();
+          this.template = this.optionsNorm.template;
+          this.createBusy();
+          this.busyEmitter.emit(this.isLoading);
+      }
   }
 
   private normalizeOptions(options: any): IBusyConfig {
@@ -110,7 +112,6 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
     if (!Array.isArray(options.busy)) {
       options.busy = [options.busy];
     }
-
     return options;
   }
 
@@ -126,24 +127,9 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
     if (this.busyRef) {
       this.busyRef.destroy();
     }
-    if (this.backdropRef) {
-      this.backdropRef.destroy();
-    }
     if (this.componentViewRef) {
       this.appRef.detachView(this.componentViewRef);
     }
-  }
-
-  private createBackdrop() {
-    const backdropFactory = this.resolver.resolveComponentFactory(NgBusyBackdropComponent);
-    const injector = Injector.create({
-      providers: [{
-          provide: 'busyEmitter',
-          useValue: this.busyEmitter
-        }
-      ], parent: this.injector
-    });
-    this.backdropRef = this.vcr.createComponent(backdropFactory, undefined, injector);
   }
 
   private createBusy() {
@@ -151,11 +137,8 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
     const injector = Injector.create({
       providers: [
         {
-          provide: 'busyConfig',
-          useValue: {
-            host: this.element.nativeElement,
-            wrapperClass: this.optionsNorm.wrapperClass
-          }
+          provide: 'instanceConfigHolder',
+          useValue: this.instanceConfigHolder
         },
         {
           provide: 'message',

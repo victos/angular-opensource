@@ -8,6 +8,7 @@ export class BusyConfig implements IBusyConfig {
     backdrop: boolean;
     message: string;
     wrapperClass: string;
+    disableAnimation: boolean;
 
     constructor(config: IBusyConfig = {}) {
         for (const option of Object.keys(BUSY_CONFIG_DEFAULTS)) {
@@ -67,6 +68,7 @@ export interface IBusyConfig {
     message?: string;
     wrapperClass?: string;
     busy?: Array<Promise<any> | Subscription>;
+    disableAnimation?: boolean;
 }
 
 export const BUSY_CONFIG_DEFAULTS = {
@@ -75,5 +77,6 @@ export const BUSY_CONFIG_DEFAULTS = {
     minDuration: 0,
     backdrop: true,
     message: 'Please wait...',
-    wrapperClass: 'ng-busy'
+    wrapperClass: 'ng-busy',
+    disableAnimation: false
 };

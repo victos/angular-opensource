@@ -36,6 +36,16 @@
         </label>
     </div>
 </div>
+<div class="form-group row">
+    <label class="col-sm-5 form-control-label">Animation</label>
+    <div class="col-sm-7">
+        <label class="c-input c-checkbox">
+            <input type="checkbox" id="options-animation" #animationInput name="backdrop" (change)="disableAnimation(animationInput)">
+            <span class="c-indicator"></span>
+            Disable
+        </label>
+    </div>
+</div>
 <div class="col-sm-offset-5 col-sm-7">
     <button type="button" class="btn btn-secondary" (click)="playDemo()">Demo</button>
 </div>
