@@ -21,16 +21,18 @@ import {InstanceConfigHolderService} from './service/instance-config-holder.serv
 
 @Directive({
   selector: '[ngBusy]',
-  providers: [ BusyTrackerService, InstanceConfigHolderService ]
+  providers: [BusyTrackerService, InstanceConfigHolderService]
 })
 export class NgBusyDirective implements DoCheck, OnDestroy {
   @Input('ngBusy')
   set options(op) {
     this._option = op;
   }
+
   get options() {
     return this._option;
   }
+
   @Output() busyStart = new EventEmitter();
   @Output() busyStop = new EventEmitter();
   private optionsRecorded: IBusyConfig;
@@ -54,10 +56,12 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
               private renderer: Renderer2,
               private injector: Injector) {
     this.onStartSubscription = tracker.onStartBusy.subscribe(() => {
-      this.recreateBusyIfNecessary();
-      this.isLoading = true;
-      this.busyEmitter.emit(this.isLoading);
-      this.busyStart.emit();
+      setTimeout(() => {
+        this.recreateBusyIfNecessary();
+        this.isLoading = true;
+        this.busyEmitter.emit(this.isLoading);
+        this.busyStart.emit();
+      }, 0);
     });
     this.onStopSubscription = tracker.onStopBusy.subscribe(() => {
       this.isLoading = false;
@@ -89,14 +93,14 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
   }
 
   private recreateBusyIfNecessary() {
-      if (!this.busyRef
-          || this.template !== this.optionsNorm.template
-      ) {
-          this.destroyComponents();
-          this.template = this.optionsNorm.template;
-          this.createBusy();
-          this.busyEmitter.emit(this.isLoading);
-      }
+    if (!this.busyRef
+      || this.template !== this.optionsNorm.template
+    ) {
+      this.destroyComponents();
+      this.template = this.optionsNorm.template;
+      this.createBusy();
+      this.busyEmitter.emit(this.isLoading);
+    }
   }
 
   private normalizeOptions(options: any): IBusyConfig {

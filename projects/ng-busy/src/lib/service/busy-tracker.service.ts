@@ -21,7 +21,6 @@ export class BusyTrackerService implements OnDestroy {
 
   onStartBusy: EventEmitter<any> = new EventEmitter();
   onStopBusy: EventEmitter<any> = new EventEmitter();
-  onCheckPending = new EventEmitter();
 
   get isUpdateActiveStatusAllowedToRun(): boolean {
     return this.delayTimer === undefined && this.durationTimer === undefined;
@@ -38,9 +37,8 @@ export class BusyTrackerService implements OnDestroy {
       this.onStopBusy.emit();
     }
     this.__isActive = val;
-    this.onCheckPending.emit();
   }
-  get busyList(){
+  get busyList() {
     return this.busyQueue;
   }
 

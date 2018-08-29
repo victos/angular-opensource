@@ -162,29 +162,20 @@ describe('BusyTrackerService', () => {
     prepareService(service);
     let isStarted = false;
     let isStopped = false;
-    let checkCount = 0;
-    let checkResult = true;
     service.onStartBusy.subscribe(() => {
       isStarted = true;
     });
     service.onStopBusy.subscribe(() => {
       isStopped = true;
     });
-    service.onCheckPending.subscribe(() => {
-      expect(service.isActive).toBe(checkResult);
-      checkCount += 1;
-    });
     const options = prepareOption(0, 0, [createPromiseWithDelay(1000)]);
     service.load(options);
     tick(500);
     expect(isStarted).toBe(true);
     expect(isStopped).toBe(false);
-    expect(checkCount).toBeGreaterThan(0);
-    checkResult = false;
     tick(501);
     expect(isStarted).toBe(true);
     expect(isStopped).toBe(true);
-    expect(checkCount).toBeGreaterThan(1);
     expect(service['busyQueue'].length).toBe(0);
   })));
 

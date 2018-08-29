@@ -204,6 +204,9 @@ describe('NgBusyDirective', () => {
       template: 'I\'m from another busy',
       wrapperClass: 'another_content_class'
     };
+    tick(0);
+    fixture.detectChanges();
+    fixture1.detectChanges();
     tick(701);
     fixture.detectChanges();
     fixture1.detectChanges();
