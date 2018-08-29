@@ -18,6 +18,7 @@ import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/tes
 import {DefaultBusyComponent} from './model/busy-config';
 import {NgBusyComponent} from './component/ng-busy/ng-busy.component';
 import {Subscription, Observable} from 'rxjs';
+import {InstanceConfigHolderService} from './service/instance-config-holder.service';
 
 const createPromiseWithDelay = (delay: number): Promise<any> => {
   return new Promise((resolve) => {
@@ -48,21 +49,12 @@ const createSubscriptionWithDelay = (delay: number): Subscription => {
     `,
 })
 export class CustomBusyComponent {
-  private _msg: string;
 
-  constructor(@Inject('message') private msg: string, private _changeDetectionRef: ChangeDetectorRef) {
+  constructor(@Inject('instanceConfigHolder') private instanceConfigHolder: InstanceConfigHolderService) {
   }
 
   get message() {
-    if (this._msg === undefined) {
-      this.message = this.msg;
-    }
-    return this._msg;
-  }
-
-  set message(msg: string) {
-    this._msg = msg;
-    this._changeDetectionRef.detectChanges();
+    return this.instanceConfigHolder.config.message;
   }
 }
 

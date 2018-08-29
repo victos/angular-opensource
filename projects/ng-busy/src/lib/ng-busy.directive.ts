@@ -145,10 +145,6 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
           useValue: this.instanceConfigHolder
         },
         {
-          provide: 'message',
-          useValue: this.optionsNorm.message
-        },
-        {
           provide: 'busyEmitter',
           useValue: this.busyEmitter
         }

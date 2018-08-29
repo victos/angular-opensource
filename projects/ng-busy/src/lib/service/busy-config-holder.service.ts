@@ -8,6 +8,6 @@ export class BusyConfigHolderService {
   config: BusyConfig;
 
   constructor(@Optional() config: BusyConfig) {
-    this.config = Object.assign(BUSY_CONFIG_DEFAULTS, config || new BusyConfig());
+    this.config = Object.assign({}, BUSY_CONFIG_DEFAULTS, config || new BusyConfig());
   }
 }
