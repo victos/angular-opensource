@@ -134,6 +134,7 @@ In other words, you may use flexible syntax:
 | template | Optional | A default template component | The template can be a template or a component. If provided, the custom template will be shown in place of the default indicatory template. The scope can be augmented with a `{{message}}` field containing the indicator message text. |
 | delay | Optional | 0 | The amount of time to wait until showing the indicator. Specified in milliseconds.
 | minDuration | Optional | 0 | The amount of time to keep the indicator showing even if the busy thing was completed quicker. Specified in milliseconds.|
+| disableAnimation | Optional | false | Disable the animation when the spinner appear |
 | wrapperClass | Optional | 'ng-busy' | The name(s) of the CSS classes to be applied to the wrapper element of the indicator. |
 
 
@@ -197,7 +198,12 @@ export class AppModule
   `,
 })
 export class CustomBusyComponent {
-  constructor(@Inject('message')public message: string) {};
+  constructor(@Inject('instanceConfigHolder') private instanceConfigHolder: InstanceConfigHolderService) {
+    }
+  
+    get message() {
+      return this.instanceConfigHolder.config.message;
+    }
 }
 ```
 
