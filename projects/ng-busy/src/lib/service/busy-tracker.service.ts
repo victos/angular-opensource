@@ -71,13 +71,15 @@ export class BusyTrackerService implements OnDestroy {
 
   private loadBusyQueue(busies: Array<Promise<any> | Subscription>) {
     busies.forEach((busy: Promise<any> | Subscription) => {
-      let cur_busy;
-      if (busy instanceof Promise) {
-        cur_busy = from(busy).subscribe();
-      } else {
-        cur_busy = busy;
+      if (!!busy) {
+        let cur_busy;
+        if (busy instanceof Promise) {
+          cur_busy = from(busy).subscribe();
+        } else {
+          cur_busy = busy;
+        }
+        this.appendToQueue(cur_busy);
       }
-      this.appendToQueue(cur_busy);
     });
   }
 

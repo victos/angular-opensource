@@ -23,7 +23,14 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "src/assets/css/bootstrap.min.css",
+              "src/assets/css/busy.css",
+              "src/assets/css/desert.css",
+              "src/assets/css/doxy.css",
+              "src/assets/css/prettify.css",
+              "src/assets/css/sunburst.css",
+              "src/assets/css/sons-of-obsidian.css"
             ],
             "scripts": [
               "node_modules/code-prettify/loader/prettify.js"
