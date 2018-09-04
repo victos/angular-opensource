@@ -105,7 +105,7 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
 
   private normalizeOptions(options: any): IBusyConfig {
     if (!options) {
-      options = {busy: undefined};
+      options = {busy: []};
     } else if (Array.isArray(options)
       || options instanceof Promise
       || options instanceof Subscription

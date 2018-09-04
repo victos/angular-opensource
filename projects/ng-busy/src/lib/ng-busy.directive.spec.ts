@@ -120,7 +120,6 @@ describe('NgBusyDirective', () => {
   }));
 
   it('should work as expected when use Subscription as busyOption', fakeAsync(() => {
-    const service = TestBed.get(BusyTrackerService);
     component.options = createSubscriptionWithDelay(1000);
     fixture.detectChanges();
     tick(300);
