@@ -1,5 +1,6 @@
-import {Injectable, TemplateRef} from '@angular/core';
+import {Inject, Injectable, TemplateRef} from '@angular/core';
 import {OPTIONS_TEMPLATE} from '../component/custom-busy-component/custom-busy-component.component';
+import {InstanceConfigHolderService} from '../../../../../projects/ng-busy/src/lib/service/instance-config-holder.service';
 
 @Injectable()
 export class TemplateService {
@@ -58,22 +59,12 @@ export class DefaultBusyComponent {
     \`,
 })
 export class CustomBusyComponent {
-    private _msg: string;
+    constructor(@Inject('instanceConfigHolder') private instanceConfigHolder: InstanceConfigHolderService) {
+  }
 
-    constructor(@Inject('message') private msg: string, private _changeDetectionRef: ChangeDetectorRef) {
-    };
-
-    get message() {
-        if (this._msg === undefined) {
-            this.message = this.msg;
-        }
-        return this._msg;
-    }
-
-    set message(msg: string) {
-        this._msg = msg;
-        this._changeDetectionRef.detectChanges();
-    }
+  get message() {
+    return this.instanceConfigHolder.config.message;
+  }
 }`,
     'template': `<ng-template #customTemplate>
     <div style="margin-top: 110px; text-align: center;">Hi, This is from ng-template.</div>

@@ -1,5 +1,6 @@
 import {ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
 import {BUSY_CONFIG_DEFAULTS} from 'ng-busy';
+import {InstanceConfigHolderService} from '../../../../../../projects/ng-busy/src/lib/service/instance-config-holder.service';
 
 @Component({
   selector: 'default-busy',
@@ -13,21 +14,11 @@ import {BUSY_CONFIG_DEFAULTS} from 'ng-busy';
 })
 export class CustomBusyComponentComponent {
 
-  private _msg: string;
-
-  constructor(@Inject('message') private msg: string, private _changeDetectionRef: ChangeDetectorRef) {
+  constructor(@Inject('instanceConfigHolder') private instanceConfigHolder: InstanceConfigHolderService) {
   }
 
   get message() {
-    if (this._msg === undefined) {
-      this.message = this.msg;
-    }
-    return this._msg;
-  }
-
-  set message(msg: string) {
-    this._msg = msg;
-    this._changeDetectionRef.detectChanges();
+    return this.instanceConfigHolder.config.message;
   }
 }
 
