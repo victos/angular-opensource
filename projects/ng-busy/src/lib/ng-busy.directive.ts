@@ -10,7 +10,6 @@ import {
   TemplateRef, Type,
   ViewContainerRef
 } from '@angular/core';
-import {equals} from './tools/util';
 import {ViewRef} from '@angular/core/src/linker/view_ref';
 import {BusyTrackerService} from './service/busy-tracker.service';
 import {BusyConfigHolderService} from './service/busy-config-holder.service';
@@ -35,7 +34,6 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
 
   @Output() busyStart = new EventEmitter();
   @Output() busyStop = new EventEmitter();
-  private optionsRecorded: IBusyConfig;
   private optionsNorm: IBusyConfig;
   private busyRef: ComponentRef<NgBusyComponent>;
   private componentViewRef: ViewRef;
@@ -71,19 +69,13 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
   }
 
   ngDoCheck() {
-    const options: IBusyConfig = this.optionsNorm = this.normalizeOptions(this.options);
-
-    if (!this.isOptionsChanged()) {
-      return;
-    }
+    this.optionsNorm = this.normalizeOptions(this.options);
     this.instanceConfigHolder.config = this.optionsNorm;
-    if (!equals(options.busy, this.tracker.busyList)) {
-      this.tracker.load({
-        busyList: options.busy,
-        delay: options.delay,
-        minDuration: options.minDuration
-      });
-    }
+    this.tracker.load({
+      busyList: this.optionsNorm.busy,
+      delay: this.optionsNorm.delay,
+      minDuration: this.optionsNorm.minDuration
+    });
   }
 
   ngOnDestroy() {
@@ -117,14 +109,6 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
       options.busy = [options.busy];
     }
     return options;
-  }
-
-  private isOptionsChanged() {
-    if (equals(this.optionsNorm, this.optionsRecorded)) {
-      return false;
-    }
-    this.optionsRecorded = this.optionsNorm;
-    return true;
   }
 
   private destroyComponents() {

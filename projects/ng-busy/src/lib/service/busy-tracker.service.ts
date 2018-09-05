@@ -53,7 +53,7 @@ export class BusyTrackerService implements OnDestroy {
   }
 
   private startLoading(options: TrackerOptions) {
-    if (!this.isBusiesProcessing) {
+    if (!this.isBusiesProcessing && this.busyList.length > 0) {
       this.isBusiesProcessing = true;
       this.isDelayProcessing = true;
       this.updateActiveStatus();
@@ -70,16 +70,19 @@ export class BusyTrackerService implements OnDestroy {
   }
 
   private loadBusyQueue(busies: Array<Promise<any> | Subscription>) {
-    busies.forEach((busy: Promise<any> | Subscription) => {
-      if (!!busy) {
-        let cur_busy;
-        if (busy instanceof Promise) {
-          cur_busy = from(busy).subscribe();
-        } else {
-          cur_busy = busy;
-        }
-        this.appendToQueue(cur_busy);
+    busies.filter((busy) => {
+      return busy && !busy.hasOwnProperty('__loaded_mark_by_ng_busy');
+    }).forEach((busy: Promise<any> | Subscription) => {
+      Object.defineProperty(busy, '__loaded_mark_by_ng_busy', {
+        value: true, configurable: false, enumerable: false, writable: false
+      });
+      let cur_busy;
+      if (busy instanceof Promise) {
+        cur_busy = from(busy).subscribe();
+      } else {
+        cur_busy = busy;
       }
+      this.appendToQueue(cur_busy);
     });
   }
 

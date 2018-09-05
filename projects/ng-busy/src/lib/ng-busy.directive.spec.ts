@@ -125,9 +125,10 @@ describe('NgBusyDirective', () => {
     tick(300);
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).not.toBeNull();
-    tick(701);
+    tick(700);
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeNull();
+    tick();
   }));
 
   it('should load default template when there is a busy and no template configured', fakeAsync(() => {
@@ -136,9 +137,10 @@ describe('NgBusyDirective', () => {
     tick(300);
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).not.toBeNull();
-    tick(701);
+    tick(700);
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeNull();
+    tick();
   }));
 
   it('should load the template when the option template is configured', fakeAsync(() => {
@@ -151,9 +153,10 @@ describe('NgBusyDirective', () => {
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy .custom_template_for_test')).nativeElement.textContent)
       .toBe('Hi, This is from ng-template.');
-    tick(701);
+    tick(700);
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy .custom_template_for_test'))).toBeNull();
+    tick();
   }));
 
 
@@ -168,9 +171,10 @@ describe('NgBusyDirective', () => {
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy>.content_class')).nativeElement.textContent)
       .toBe('hello');
-    tick(701);
+    tick(700);
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy>.content_class'))).toBeNull();
+    tick();
   }));
 
   it('not affect each other when there many busies', fakeAsync(() => {
@@ -198,7 +202,7 @@ describe('NgBusyDirective', () => {
     tick(0);
     fixture.detectChanges();
     fixture1.detectChanges();
-    tick(701);
+    tick(700);
     fixture.detectChanges();
     fixture1.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy>.content_class'))).toBeNull();
@@ -210,6 +214,7 @@ describe('NgBusyDirective', () => {
     expect(fixture.debugElement.query(By.css('lib-ng-busy>.content_class'))).toBeNull();
     expect(fixture1.debugElement.query(By.css('lib-ng-busy>.content_class'))).toBeNull();
     expect(fixture1.debugElement.query(By.css('lib-ng-busy>.another_content_class'))).toBeNull();
+    tick();
   }));
 
   it('component typed template', fakeAsync(() => {
@@ -224,9 +229,10 @@ describe('NgBusyDirective', () => {
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy>.content_class_component')).nativeElement.textContent.trim())
       .toBe('this is from component');
-    tick(701);
+    tick(700);
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('lib-ng-busy>.content_class_component'))).toBeNull();
+    tick();
   }));
 
   it('should work as expected when use ChangeDetectionStrategy.OnPush', fakeAsync(() => {
@@ -240,8 +246,9 @@ describe('NgBusyDirective', () => {
     tick(300);
     fixtureOnPush.detectChanges();
     expect(fixtureOnPush.debugElement.query(By.css('lib-ng-busy default-busy'))).not.toBeNull();
-    tick(701);
+    tick(700);
     fixtureOnPush.detectChanges();
     expect(fixtureOnPush.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeNull();
+    tick();
   }));
 });
