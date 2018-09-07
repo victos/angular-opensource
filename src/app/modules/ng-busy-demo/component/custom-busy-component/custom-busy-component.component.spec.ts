@@ -9,7 +9,7 @@ describe('CustomBusyComponentComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [CustomBusyComponentComponent],
-      providers: [{provide: 'message', useValue: 'hello'}]
+      providers: [{provide: 'instanceConfigHolder', useValue: {config: {message : 'hello'}}}]
     })
       .compileComponents();
   }));
