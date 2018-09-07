@@ -235,6 +235,29 @@ describe('NgBusyDirective', () => {
     tick();
   }));
 
+  it('the message of the busy should be changed if the message in the option is changed', fakeAsync(() => {
+    component.options = {
+      busy: createPromiseWithDelay(1000),
+      template: CustomBusyComponent,
+      message: 'this is from component',
+      wrapperClass: 'content_class_component'
+    };
+    fixture.detectChanges();
+    tick(300);
+    fixture.detectChanges();
+    expect(fixture.debugElement.query(By.css('lib-ng-busy>.content_class_component')).nativeElement.textContent.trim())
+      .toBe('this is from component');
+    component.options.message = 'wow, the message changed!!!';
+    tick(200);
+    fixture.detectChanges();
+    expect(fixture.debugElement.query(By.css('lib-ng-busy>.content_class_component')).nativeElement.textContent.trim())
+      .toBe('wow, the message changed!!!');
+    tick(500);
+    fixture.detectChanges();
+    expect(fixture.debugElement.query(By.css('lib-ng-busy>.content_class_component'))).toBeNull();
+    tick();
+  }));
+
   it('should work as expected when use ChangeDetectionStrategy.OnPush', fakeAsync(() => {
     const fixtureOnPush: ComponentFixture<TestNgBusyOnPushComponent> = TestBed.createComponent(TestNgBusyOnPushComponent);
     const componentOnPush: TestNgBusyOnPushComponent = fixtureOnPush.componentInstance;
