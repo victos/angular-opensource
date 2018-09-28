@@ -1,5 +1,5 @@
 <div [class]="wrapperClass" @flyInOut [@.disabled]="disableAnimation" *ngIf="isActive">
   <ng-content></ng-content>
 </div>
-<div class="ng-busy-backdrop" @flyInOut *ngIf="showBackdrop && isActive">
+<div class="ng-busy-backdrop" @flyInOut [@.disabled]="disableAnimation" *ngIf="showBackdrop && isActive">
 </div>
