@@ -17,6 +17,7 @@ import {Subscription} from 'rxjs';
 import {IBusyConfig} from './model/busy-config';
 import {NgBusyComponent} from './component/ng-busy/ng-busy.component';
 import {InstanceConfigHolderService} from './service/instance-config-holder.service';
+import {isPromise} from './util/isPromise';
 
 @Directive({
   selector: '[ngBusy]',
@@ -99,7 +100,7 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
     if (!options) {
       options = {busy: []};
     } else if (Array.isArray(options)
-      || options instanceof Promise
+      || isPromise(options)
       || options instanceof Subscription
     ) {
       options = {busy: options};

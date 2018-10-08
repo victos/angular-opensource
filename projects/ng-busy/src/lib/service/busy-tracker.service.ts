@@ -1,5 +1,6 @@
 import {EventEmitter, Injectable, OnDestroy} from '@angular/core';
 import {Subscription, from, timer} from 'rxjs';
+import {isPromise} from '../util/isPromise';
 
 export interface TrackerOptions {
   minDuration: number;
@@ -77,7 +78,7 @@ export class BusyTrackerService implements OnDestroy {
         value: true, configurable: false, enumerable: false, writable: false
       });
       let cur_busy;
-      if (busy instanceof Promise) {
+      if (isPromise(busy)) {
         cur_busy = from(busy).subscribe();
       } else {
         cur_busy = busy;
