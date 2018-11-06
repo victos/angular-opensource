@@ -3,11 +3,11 @@
  * @author yumao<yuzhang.lille@gmail.com>
  */
 
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 
-import {BUSY_CONFIG_DEFAULTS, IBusyConfig} from 'ng-busy';
-import {Observer, Observable} from 'rxjs';
-import {TemplateService} from '../../service/template.service';
+import { BUSY_CONFIG_DEFAULTS, IBusyConfig } from 'ng-busy';
+import { Observer, Observable } from 'rxjs';
+import { TemplateService } from '../../service/template.service';
 
 
 @Component({
@@ -16,11 +16,12 @@ import {TemplateService} from '../../service/template.service';
   styleUrls: ['./options.component.css']
 })
 export class OptionsComponent {
+  templateNgStyle = '{"background-color":"black", "color": "red"}';
   templateType = 'default';
   templates: any = [
-    {val: 'default', show: 'Default'},
-    {val: 'custom', show: 'Custom'},
-    {val: 'template', show: 'Template'}
+    { val: 'default', show: 'Default' },
+    { val: 'custom', show: 'Custom' },
+    { val: 'template', show: 'Template' }
   ];
   data: IBusyConfig = Object.assign({}, BUSY_CONFIG_DEFAULTS);
 
@@ -41,6 +42,7 @@ export class OptionsComponent {
   }
 
   playDemo() {
+    this.data.templateNgStyle = JSON.parse(this.templateNgStyle);
     const busies = [];
     const promise = new Promise(resolve => {
       setTimeout(() => {

@@ -10,14 +10,14 @@ import {
   TemplateRef, Type,
   ViewContainerRef
 } from '@angular/core';
-import {ViewRef} from '@angular/core/src/linker/view_ref';
-import {BusyTrackerService} from './service/busy-tracker.service';
-import {BusyConfigHolderService} from './service/busy-config-holder.service';
-import {Subscription} from 'rxjs';
-import {IBusyConfig} from './model/busy-config';
-import {NgBusyComponent} from './component/ng-busy/ng-busy.component';
-import {InstanceConfigHolderService} from './service/instance-config-holder.service';
-import {isPromise} from './util/isPromise';
+import { ViewRef } from '@angular/core/src/linker/view_ref';
+import { BusyTrackerService } from './service/busy-tracker.service';
+import { BusyConfigHolderService } from './service/busy-config-holder.service';
+import { Subscription } from 'rxjs';
+import { IBusyConfig } from './model/busy-config';
+import { NgBusyComponent } from './component/ng-busy/ng-busy.component';
+import { InstanceConfigHolderService } from './service/instance-config-holder.service';
+import { isPromise } from './util/isPromise';
 
 @Directive({
   selector: '[ngBusy]',
@@ -43,17 +43,18 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
   private isLoading = false;
   private busyEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
   public template: TemplateRef<any> | Type<any>;
+  public templateNgStyle: {};
   private _option: any;
 
   constructor(private configHolder: BusyConfigHolderService,
-              private instanceConfigHolder: InstanceConfigHolderService,
-              private resolver: ComponentFactoryResolver,
-              private tracker: BusyTrackerService,
-              private appRef: ApplicationRef,
-              private vcr: ViewContainerRef,
-              private element: ElementRef,
-              private renderer: Renderer2,
-              private injector: Injector) {
+    private instanceConfigHolder: InstanceConfigHolderService,
+    private resolver: ComponentFactoryResolver,
+    private tracker: BusyTrackerService,
+    private appRef: ApplicationRef,
+    private vcr: ViewContainerRef,
+    private element: ElementRef,
+    private renderer: Renderer2,
+    private injector: Injector) {
     this.onStartSubscription = tracker.onStartBusy.subscribe(() => {
       setTimeout(() => {
         this.recreateBusyIfNecessary();
@@ -88,9 +89,11 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
   private recreateBusyIfNecessary() {
     if (!this.busyRef
       || this.template !== this.optionsNorm.template
+      || this.templateNgStyle !== this.optionsNorm.templateNgStyle
     ) {
       this.destroyComponents();
       this.template = this.optionsNorm.template;
+      this.templateNgStyle = this.optionsNorm.templateNgStyle;
       this.createBusy();
       this.busyEmitter.emit(this.isLoading);
     }
@@ -98,12 +101,12 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
 
   private normalizeOptions(options: any): IBusyConfig {
     if (!options) {
-      options = {busy: []};
+      options = { busy: [] };
     } else if (Array.isArray(options)
       || isPromise(options)
       || options instanceof Subscription
     ) {
-      options = {busy: options};
+      options = { busy: options };
     }
     options = Object.assign({}, this.configHolder.config, options);
     if (!Array.isArray(options.busy)) {
@@ -151,6 +154,7 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
     }
     const factory = this.resolver.resolveComponentFactory(this.template);
     const componentRef = factory.create(injector);
+    componentRef.instance.templateNgStyle = this.options.templateNgStyle;
     this.componentViewRef = componentRef.hostView;
     this.appRef.attachView(this.componentViewRef);
     return [[componentRef.location.nativeElement]];
