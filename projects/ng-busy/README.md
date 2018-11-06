@@ -136,6 +136,7 @@ In other words, you may use flexible syntax:
 | minDuration | Optional | 0 | The amount of time to keep the indicator showing even if the busy thing was completed quicker. Specified in milliseconds.|
 | disableAnimation | Optional | false | Disable the animation when the spinner appear |
 | wrapperClass | Optional | 'ng-busy' | The name(s) of the CSS classes to be applied to the wrapper element of the indicator. |
+| templateNgStyle | Optional | { } | An object that will be assigned to the custom component assigned to `template` option, if one was configured (see example below in Overriding Defaults). |
 
 
 ## Overriding Defaults
@@ -157,7 +158,8 @@ import {CustomBusyComponent} from '...'
                 backdrop: false,
                 template: CustomBusyComponent,
                 delay: 200,
-                minDuration: 600
+                minDuration: 600,
+                templateNgStyle: { "background-color": "black" }
             }))
         ],
         declarations: [
@@ -176,7 +178,7 @@ export class AppModule
 @Component({
   selector: 'default-busy',
   template: `
-    <div class="ng-busy-default-wrapper">
+    <div class="ng-busy-default-wrapper" [ngStyle]="templateNgStyle">
           <div class="ng-busy-default-sign">
             <div class="ng-busy-default-spinner">
               <div class="bar1"></div>
