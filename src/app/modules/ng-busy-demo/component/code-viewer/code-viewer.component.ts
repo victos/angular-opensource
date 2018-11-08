@@ -58,6 +58,7 @@ export class CodeViewerComponent implements OnChanges {
     options['backdrop'] = config.backdrop;
     options['message'] = config.message;
     options['wrapperClass'] = config.wrapperClass;
+    options['templateNgStyle'] = config.templateNgStyle;
     let result = JSON.stringify(options);
     result = result.replace('{', `{template:${template},`);
     return result;

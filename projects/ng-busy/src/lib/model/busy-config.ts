@@ -4,6 +4,7 @@ import {InstanceConfigHolderService} from '../service/instance-config-holder.ser
 
 export class BusyConfig implements IBusyConfig {
   template: TemplateRef<any> | Type<any>;
+  templateNgStyle: {};
   delay: number;
   minDuration: number;
   backdrop: boolean;
@@ -54,6 +55,7 @@ export class DefaultBusyComponent {
 
 export interface IBusyConfig {
   template?: TemplateRef<any> | Type<any>;
+  templateNgStyle?: {};
   delay?: number;
   minDuration?: number;
   backdrop?: boolean;
@@ -65,6 +67,7 @@ export interface IBusyConfig {
 
 export const BUSY_CONFIG_DEFAULTS = {
   template: DefaultBusyComponent,
+  templateNgStyle: {},
   delay: 0,
   minDuration: 0,
   backdrop: true,
