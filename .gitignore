@@ -46,3 +46,4 @@ package-lock.json
 e2e/src/
 e2e/tsconfig.e2e.json
 yarn.lock
+yarn-error.log
