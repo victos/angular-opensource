@@ -34,19 +34,20 @@ const createSubscriptionWithDelay = (delay: number): Subscription => {
       o.next();
       o.complete();
     }, delay);
-  }).subscribe(() => {});
+  }).subscribe(() => {
+  });
 };
 
 // @ts-ignore
 @Component({
   selector: 'lib-component-template',
   template: `
-        <div>
-            <div>
-                {{message}}
-            </div>
-        </div>
-    `,
+      <div>
+          <div>
+              {{message}}
+          </div>
+      </div>
+  `,
 })
 export class CustomBusyComponent {
 
@@ -67,7 +68,7 @@ export class CustomBusyComponent {
 })
 class TestNgBusyComponent {
   options: any;
-  @ViewChild('customTemplate', /* TODO: add static flag */ {})
+  @ViewChild('customTemplate', {static: true})
   customTemplate: TemplateRef<any>;
 }
 
@@ -78,7 +79,9 @@ class TestNgBusyComponent {
 })
 class TestNgBusyOnPushComponent {
   options: any;
-  constructor(public cdr: ChangeDetectorRef) {}
+
+  constructor(public cdr: ChangeDetectorRef) {
+  }
 }
 
 describe('NgBusyDirective', () => {
