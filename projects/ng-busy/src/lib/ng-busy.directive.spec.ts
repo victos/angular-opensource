@@ -67,7 +67,7 @@ export class CustomBusyComponent {
 })
 class TestNgBusyComponent {
   options: any;
-  @ViewChild('customTemplate')
+  @ViewChild('customTemplate', /* TODO: add static flag */ {})
   customTemplate: TemplateRef<any>;
 }
 
