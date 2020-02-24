@@ -5,7 +5,7 @@ import { InstanceConfigHolderService } from '../../../../../../projects/ng-busy/
 @Component({
   selector: 'default-busy',
   template: `
-      <div style="background: url('../../assets/img/du.gif') no-repeat center 20px; background-size: 72px;" [ngStyle]="templateNgStyle">
+      <div style="background: url('../../assets/img/du.gif') no-repeat center 20px; background-size: 72px;" [ngStyle]="instanceConfigHolder.config.templateNgStyle">
           <div style="margin-top: 110px; text-align: center; font-size: 18px; font-weight: 700; line-height: 110px;">
               {{message}}
           </div>
@@ -14,7 +14,7 @@ import { InstanceConfigHolderService } from '../../../../../../projects/ng-busy/
 })
 export class CustomBusyComponentComponent {
 
-  constructor(@Inject('instanceConfigHolder') private instanceConfigHolder: InstanceConfigHolderService) {
+  constructor(@Inject('instanceConfigHolder')public instanceConfigHolder: InstanceConfigHolderService) {
   }
 
   get message() {

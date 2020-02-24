@@ -14,7 +14,7 @@ import {NgBusyComponent} from './component/ng-busy/ng-busy.component';
   entryComponents: [DefaultBusyComponent, NgBusyComponent]
 })
 export class NgBusyModule {
-  static forRoot(config: IBusyConfig): ModuleWithProviders {
+  static forRoot(config: IBusyConfig): ModuleWithProviders<NgBusyModule> {
     return {
       ngModule: NgBusyModule,
       providers: [
