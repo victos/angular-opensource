@@ -8,6 +8,10 @@
 
 8.x version is used for angular 8.x
 
+9.x version is used for angular 9.x
+
+10.x version is used for angular 10.x
+
 **NgBusy** can show busy/loading indicators on any promise, or on any Observable's subscription.
 
 [![Travis](https://img.shields.io/travis/victos/angular-opensource/master.svg?label=Travis%20CI&style=flat-square)](https://travis-ci.org/victos/angular-opensource)

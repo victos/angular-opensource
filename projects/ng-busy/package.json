@@ -1,15 +1,9 @@
 {
   "name": "ng-busy",
-  "version": "9.0.0",
+  "version": "10.0.0",
   "description": "Show busy/loading indicators on any promise or subscription",
   "author": "victos",
   "license": "MIT",
-  "scripts": {
-    "prebuild": "rimraf ../../dist/ng-busy",
-    "build": "ng build ng-busy --prod",
-    "postbuild": "lessc src/lib/style/busy.less ../../dist/ng-busy/src/style/busy.css",
-    "publish": "npm run build && npm publish ../../dist/ng-busy"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/victos/angular-opensource.git"
@@ -35,9 +29,12 @@
     "npm": ">= 5.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^9.0.0",
-    "@angular/core": "^9.0.0",
-    "@angular/animations": "^9.0.0",
-    "rxjs": "^6.0.0"
+    "@angular/common": "^10.0.0",
+    "@angular/core": "^10.0.0",
+    "@angular/animations": "^10.0.0",
+    "rxjs": "^6.5.4"
+  },
+  "dependencies": {
+    "tslib": "^2.0.0"
   }
 }
