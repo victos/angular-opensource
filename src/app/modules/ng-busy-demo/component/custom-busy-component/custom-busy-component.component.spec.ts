@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {CustomBusyComponentComponent} from './custom-busy-component.component';
 
@@ -6,7 +6,7 @@ describe('CustomBusyComponentComponent', () => {
   let component: CustomBusyComponentComponent;
   let fixture: ComponentFixture<CustomBusyComponentComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CustomBusyComponentComponent],
       providers: [{provide: 'instanceConfigHolder', useValue: {config: {message : 'hello'}}}]
