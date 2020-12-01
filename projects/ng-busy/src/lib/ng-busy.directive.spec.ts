@@ -1,5 +1,5 @@
 import {NgBusyDirective} from './ng-busy.directive';
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import {BusyTrackerService} from './service/busy-tracker.service';
 import {BusyConfigHolderService} from './service/busy-config-holder.service';
 import {
@@ -90,7 +90,7 @@ describe('NgBusyDirective', () => {
   let busyContainer: DebugElement;
   const mockElementRef: ElementRef = {nativeElement: undefined};
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [TestNgBusyComponent, CustomBusyComponent, TestNgBusyOnPushComponent],
       imports: [NgBusyModule.forRoot({
@@ -115,7 +115,7 @@ describe('NgBusyDirective', () => {
     fixture.detectChanges();
   });
 
-  it('should not create lib-ng-busy after init the NgBusyDirective', async(() => {
+  it('should not create lib-ng-busy after init the NgBusyDirective', waitForAsync(() => {
     const compiled = fixture.debugElement.nativeElement;
     component.options = undefined;
     fixture.detectChanges();

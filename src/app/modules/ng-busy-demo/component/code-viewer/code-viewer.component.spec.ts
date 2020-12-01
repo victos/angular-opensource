@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {CodeViewerComponent} from './code-viewer.component';
 import {TemplateService} from '../../service/template.service';
@@ -8,7 +8,7 @@ describe('CodeViewerComponent', () => {
   let component: CodeViewerComponent;
   let fixture: ComponentFixture<CodeViewerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CodeViewerComponent],
       providers: [TemplateService, Renderer2, {provide: ElementRef, useClass: {}}]

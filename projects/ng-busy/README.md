@@ -12,6 +12,8 @@
 
 10.x version is used for angular 10.x
 
+11.x version is used for angular 11.x
+
 **NgBusy** can show busy/loading indicators on any promise, or on any Observable's subscription.
 
 [![Travis](https://img.shields.io/travis/victos/angular-opensource/master.svg?label=Travis%20CI&style=flat-square)](https://travis-ci.org/victos/angular-opensource)
