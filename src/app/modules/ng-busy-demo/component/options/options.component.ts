@@ -44,7 +44,7 @@ export class OptionsComponent {
   playDemo() {
     this.data.templateNgStyle = JSON.parse(this.templateNgStyle);
     const busies = [];
-    const promise = new Promise(resolve => {
+    const promise = new Promise<void>(resolve => {
       setTimeout(() => {
         resolve();
         console.log('Promise finished!');
