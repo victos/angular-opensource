@@ -11,7 +11,7 @@ describe('CodeViewerComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CodeViewerComponent],
-      providers: [TemplateService, Renderer2, {provide: ElementRef, useClass: {}}]
+      providers: [TemplateService, Renderer2, {provide: ElementRef, useValue: {}}]
     })
       .compileComponents();
   }));
