@@ -20,7 +20,7 @@ import {NgBusyComponent} from './component/ng-busy/ng-busy.component';
 import {Subscription, Observable} from 'rxjs';
 import {InstanceConfigHolderService} from './service/instance-config-holder.service';
 
-const createPromiseWithDelay = (delay: number): Promise<any> => {
+const createPromiseWithDelay = (delay: number): Promise<void> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve();

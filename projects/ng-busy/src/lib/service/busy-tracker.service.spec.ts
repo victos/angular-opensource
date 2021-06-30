@@ -17,7 +17,7 @@ const prepareOption = (delay: number, minDuration: number, busyList: Array<Promi
   };
 };
 const createPromiseWithDelay = (delay: number): Promise<any> => {
-  return new Promise((resolve) => {
+  return new Promise<void>((resolve) => {
     setTimeout(() => {
       resolve();
     }, delay);
