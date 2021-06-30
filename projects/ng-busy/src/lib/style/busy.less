@@ -72,8 +72,8 @@
 
   .generate-bars(@n, @i: 1) when (@i =< @n) {
     .bar@{i} {
-      transform: rotate(unit(360 / 12 * (@i - 1), deg)) translate(0, -142%);
-      animation-delay: unit(-1 + 1 / 12 * (@i - 1), s);
+      transform: rotate(unit((360 / 12 * (@i - 1)), deg)) translate(0, -142%);
+      animation-delay: unit((-1 + 1 / 12 * (@i - 1)), s);
     }
     .generate-bars(@n, (@i + 1));
   }
