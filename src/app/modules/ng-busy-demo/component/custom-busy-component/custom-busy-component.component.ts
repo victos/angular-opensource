@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import { BUSY_CONFIG_DEFAULTS } from 'ng-busy';
 import { InstanceConfigHolderService } from '../../../../../../projects/ng-busy/src/lib/service/instance-config-holder.service';
 
@@ -12,13 +12,21 @@ import { InstanceConfigHolderService } from '../../../../../../projects/ng-busy/
       </div>
   `,
 })
-export class CustomBusyComponentComponent {
+export class CustomBusyComponentComponent implements OnInit, OnDestroy {
 
   constructor(@Inject('instanceConfigHolder')public instanceConfigHolder: InstanceConfigHolderService) {
   }
 
   get message() {
     return this.instanceConfigHolder.config.message;
+  }
+
+  ngOnDestroy(): void {
+    console.log('custom component destroy');
+  }
+
+  ngOnInit(): void {
+    console.log('custom component init');
   }
 }
 

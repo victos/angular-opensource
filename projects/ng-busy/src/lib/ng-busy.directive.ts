@@ -66,6 +66,10 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
       this.isLoading = false;
       this.busyEmitter.emit(this.isLoading);
       this.busyStop.emit();
+      if (this.componentViewRef) {
+        this.appRef.detachView(this.componentViewRef);
+        this.componentViewRef.destroy();
+      }
     });
   }
 
