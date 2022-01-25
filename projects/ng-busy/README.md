@@ -36,9 +36,14 @@ npm install --save ng-busy
 ```
 
 ## Link CSS
+In angular.json:
 
-```html
-<link rel="stylesheet" href="/node_modules/ng-busy/src/style/busy.css">
+```json
+  "styles": [
+        ...
+        "node_modules/ng-busy/src/style/busy.css",
+        ...
+      ],
 ```
 
 ## Getting Started
