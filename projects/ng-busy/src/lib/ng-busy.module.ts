@@ -7,11 +7,10 @@ import {NgBusyDirective} from './ng-busy.directive';
 import {NgBusyComponent} from './component/ng-busy/ng-busy.component';
 
 @NgModule({
-  imports: [CommonModule],
-  declarations: [DefaultBusyComponent, NgBusyDirective, NgBusyComponent],
-  providers: [BusyConfigHolderService, BusyTrackerService],
-  exports: [NgBusyDirective],
-  entryComponents: [DefaultBusyComponent, NgBusyComponent]
+    imports: [CommonModule],
+    declarations: [DefaultBusyComponent, NgBusyDirective, NgBusyComponent],
+    providers: [BusyConfigHolderService, BusyTrackerService],
+    exports: [NgBusyDirective]
 })
 export class NgBusyModule {
   static forRoot(config: IBusyConfig): ModuleWithProviders<NgBusyModule> {

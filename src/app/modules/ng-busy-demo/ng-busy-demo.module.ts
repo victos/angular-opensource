@@ -13,17 +13,16 @@ import {TemplateService} from './service/template.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    NgBusyModule,
-    BrowserAnimationsModule
-  ],
-  declarations: [DemoComponent, CodeViewerComponent, HeaderComponent, OptionsComponent,
-    TableComponent, CustomBusyComponentComponent, GithubCornerComponent],
-  exports: [DemoComponent],
-  providers: [TemplateService],
-  entryComponents: [CustomBusyComponentComponent]
+    imports: [
+        CommonModule,
+        FormsModule,
+        NgBusyModule,
+        BrowserAnimationsModule
+    ],
+    declarations: [DemoComponent, CodeViewerComponent, HeaderComponent, OptionsComponent,
+        TableComponent, CustomBusyComponentComponent, GithubCornerComponent],
+    exports: [DemoComponent],
+    providers: [TemplateService]
 })
 export class NgBusyDemoModule {
 }
