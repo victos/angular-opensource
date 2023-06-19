@@ -100,11 +100,6 @@ describe('NgBusyDirective', () => {
         ApplicationRef, ViewContainerRef, {provide: ElementRef, useValue: mockElementRef}, Renderer2, Injector]
     });
 
-    TestBed.overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [CustomBusyComponent, DefaultBusyComponent, NgBusyComponent]
-      }
-    });
   }));
 
   beforeEach(() => {
