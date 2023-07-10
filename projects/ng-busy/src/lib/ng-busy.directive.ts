@@ -1,18 +1,17 @@
 import {
-  ApplicationRef,
-  ComponentFactoryResolver, ComponentRef,
+  ChangeDetectorRef,
+  ComponentRef,
   Directive, DoCheck,
-  ElementRef,
   EventEmitter, Injector,
   Input, OnDestroy,
   Output,
   Renderer2,
   TemplateRef, Type,
-  ViewContainerRef, ViewRef
+  ViewContainerRef
 } from '@angular/core';
 import { BusyTrackerService } from './service/busy-tracker.service';
 import { BusyConfigHolderService } from './service/busy-config-holder.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, skip, takeUntil } from 'rxjs';
 import { IBusyConfig } from './model/busy-config';
 import { NgBusyComponent } from './component/ng-busy/ng-busy.component';
 import { InstanceConfigHolderService } from './service/instance-config-holder.service';
@@ -20,7 +19,8 @@ import { isPromise } from './util/isPromise';
 
 @Directive({
   selector: '[ngBusy]',
-  providers: [BusyTrackerService, InstanceConfigHolderService]
+  providers: [BusyTrackerService, InstanceConfigHolderService],
+  exportAs: 'ngBusy'
 })
 export class NgBusyDirective implements DoCheck, OnDestroy {
   @Input('ngBusy')
@@ -32,44 +32,35 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
     return this._option;
   }
 
+  get trackerService() {
+    return this.tracker;
+  }
+
   @Output() busyStart = new EventEmitter();
   @Output() busyStop = new EventEmitter();
+  private _option: any;
   private optionsNorm: IBusyConfig;
   private busyRef: ComponentRef<NgBusyComponent>;
-  private componentViewRef: ViewRef;
-  private onStartSubscription: Subscription;
-  private onStopSubscription: Subscription;
-  private isLoading = false;
+  private destroyIndicator: Subject<any> = new Subject<any>();
   private busyEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
   public template: TemplateRef<any> | Type<any>;
   public templateNgStyle: {};
-  private _option: any;
 
   constructor(private configHolder: BusyConfigHolderService,
     private instanceConfigHolder: InstanceConfigHolderService,
-    private resolver: ComponentFactoryResolver,
     private tracker: BusyTrackerService,
-    private appRef: ApplicationRef,
+    private cdr: ChangeDetectorRef,
     private vcr: ViewContainerRef,
-    private element: ElementRef,
     private renderer: Renderer2,
     private injector: Injector) {
-    this.onStartSubscription = tracker.onStartBusy.subscribe(() => {
-      setTimeout(() => {
+    tracker.active.pipe(skip(1), takeUntil(this.destroyIndicator)).subscribe((status) => {
+      if (status === true) {
         this.recreateBusyIfNecessary();
-        this.isLoading = true;
-        this.busyEmitter.emit(this.isLoading);
         this.busyStart.emit();
-      }, 0);
-    });
-    this.onStopSubscription = tracker.onStopBusy.subscribe(() => {
-      this.isLoading = false;
-      this.busyEmitter.emit(this.isLoading);
-      this.busyStop.emit();
-      if (this.componentViewRef) {
-        this.appRef.detachView(this.componentViewRef);
-        this.componentViewRef.destroy();
+      } else {
+        this.busyStop.emit();
       }
+      this.busyEmitter.next(status);
     });
   }
 
@@ -84,32 +75,23 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.destroyComponents();
-    this.onStartSubscription.unsubscribe();
-    this.onStopSubscription.unsubscribe();
+    this.destroyIndicator.next(null);
   }
 
   private recreateBusyIfNecessary() {
-    if (!this.busyRef
-      || this.template !== this.optionsNorm.template
-      || this.templateNgStyle !== this.optionsNorm.templateNgStyle
-    ) {
-      this.destroyComponents();
-      this.template = this.optionsNorm.template;
-      this.templateNgStyle = this.optionsNorm.templateNgStyle;
-      this.createBusy();
-      this.busyEmitter.emit(this.isLoading);
-    }
+    this.destroyComponents();
+    this.template = this.optionsNorm.template;
+    this.templateNgStyle = this.optionsNorm.templateNgStyle;
+    this.createBusy();
   }
 
   private normalizeOptions(options: any): IBusyConfig {
     if (!options) {
       options = { busy: [] };
-    } else if (Array.isArray(options)
-      || isPromise(options)
-      || options instanceof Subscription
-    ) {
+    } else if (Array.isArray(options)) {
       options = { busy: options };
+    } else if (isPromise(options) || options instanceof Subscription) {
+      options = { busy: [options] }
     }
     options = Object.assign({}, this.configHolder.config, options);
     if (!Array.isArray(options.busy)) {
@@ -122,13 +104,9 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
     if (this.busyRef) {
       this.busyRef.destroy();
     }
-    if (this.componentViewRef) {
-      this.appRef.detachView(this.componentViewRef);
-    }
   }
 
   private createBusy() {
-    const factory = this.resolver.resolveComponentFactory(NgBusyComponent);
     const injector = Injector.create({
       providers: [
         {
@@ -142,7 +120,12 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
       ], parent: this.injector
     });
     this.template = this.optionsNorm.template;
-    this.busyRef = this.vcr.createComponent(factory, 0, injector, this.generateNgContent(injector));
+    this.busyRef = this.vcr.createComponent(NgBusyComponent, { injector, projectableNodes: this.generateNgContent(injector) });
+    this.busyRef.onDestroy(() => {
+      this.busyRef.instance.ngOnDestroy();
+    });
+    this.cdr.markForCheck();
+    this.busyRef.hostView.detectChanges();
   }
 
   private generateNgContent(injector: Injector) {
@@ -155,12 +138,15 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
       const viewRef = this.template.createEmbeddedView(context);
       return [viewRef.rootNodes];
     }
-    const factory = this.resolver.resolveComponentFactory(this.template);
-    const componentRef = factory.create(injector);
-    componentRef.instance.templateNgStyle = this.options.templateNgStyle;
-    this.componentViewRef = componentRef.hostView;
-    this.appRef.attachView(this.componentViewRef);
-    return [[componentRef.location.nativeElement]];
+    if (typeof this.template === 'function') {
+      const factory = this.vcr.createComponent(this.template, { injector });
+      factory.onDestroy(() => {
+        factory?.instance?.ngOnDestroy?.();
+      });
+      factory.changeDetectorRef.markForCheck();
+      return [[factory.location.nativeElement]];
+    }
+    return [[]];
   }
 
 }

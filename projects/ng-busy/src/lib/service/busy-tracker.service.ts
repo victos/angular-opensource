@@ -1,6 +1,11 @@
-import {EventEmitter, Injectable, OnDestroy} from '@angular/core';
-import {Subscription, from, timer} from 'rxjs';
-import {isPromise} from '../util/isPromise';
+import { Injectable, OnDestroy } from '@angular/core';
+import {
+  BehaviorSubject, Observable, Subject, tap,
+  Subscription, concatAll, forkJoin, from, of,
+  takeUntil, timer, finalize, map, take,
+  filter, iif, mergeMap, switchMap, EMPTY
+} from 'rxjs';
+import { isPromise } from '../util/isPromise';
 
 export interface TrackerOptions {
   minDuration: number;
@@ -9,92 +14,87 @@ export interface TrackerOptions {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'any'
 })
 export class BusyTrackerService implements OnDestroy {
 
-  private isDelayProcessing = false;
-  private isDurationProcessing = false;
-  private isBusiesProcessing = false;
   private busyQueue: Array<Subscription> = [];
-  private __isActive = false;
-
-  onStartBusy: EventEmitter<any> = new EventEmitter();
-  onStopBusy: EventEmitter<any> = new EventEmitter();
+  private operations: Subject<Observable<any>> = new Subject<Observable<any>>();
+  private progress: Subject<any> = new Subject<any>();
+  private destroyIndicator: Subject<any> = new Subject<any>();
+  private processingIndicator: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  active: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   get isActive(): boolean {
-    return this.__isActive;
+    return this.active.value;
   }
 
-  set isActive(val: boolean) {
-    if (this.__isActive === false && val === true && this.onStartBusy) {
-      this.onStartBusy.emit();
-    }
-    if (this.__isActive === true && val === false && this.onStopBusy) {
-      this.isBusiesProcessing = false;
-      this.onStopBusy.emit();
-    }
-    this.__isActive = val;
-  }
   get busyList() {
-    return this.busyQueue;
+    return [...this.busyQueue];
   }
 
-  constructor() {}
+  constructor() {
+    this.reset();
+    this.operations.pipe(takeUntil(this.destroyIndicator), concatAll()).subscribe();
+  }
 
   load(options: TrackerOptions) {
-    this.loadBusyQueue(options.busyList);
-    this.startLoading(options);
+    this.operations.next(
+      from(options.busyList).pipe(
+        filter(busy => busy !== null && busy !== undefined && !busy.hasOwnProperty('__loaded_mark_by_ng_busy')),
+        tap((busy) => Object.defineProperty(busy, '__loaded_mark_by_ng_busy', {
+          value: true, configurable: false, enumerable: false, writable: false
+        })),
+        map((busy) => isPromise(busy) ? from(busy).subscribe() : busy),
+        tap(subscription => this.appendToQueue(subscription))
+      ));
+    this.operations.next(
+      this.processingIndicator.pipe(take(1), mergeMap(v => iif(
+        () => v === false && this.busyQueue.filter(b => !b.closed).length > 0,
+        of(options.delay || 0).pipe(
+          tap(() => {
+            this.processingIndicator.next(true);
+          }),
+          switchMap((c) => timer(c).pipe(
+            tap(() => this.active.next(true)),
+            map(() => this.busyQueue.filter(b => !b.closed).length),
+            mergeMap((c) => iif(
+              () => c === 0 && (options.minDuration || 0) === 0,
+              EMPTY.pipe(finalize(() => this.reset())),
+              EMPTY.pipe(finalize(() => {
+                forkJoin([this.progress.pipe(take(1)), timer(options.minDuration || 0)])
+                  .pipe(finalize(() => this.reset())).subscribe();
+              }))
+            ))
+          ))),
+        EMPTY)))
+    );
   }
 
   private updateActiveStatus() {
-    this.isActive = this.isBusiesProcessing &&
-      !this.isDelayProcessing &&
-      (this.isDurationProcessing || this.busyQueue.length > 0);
-  }
-
-  private startLoading(options: TrackerOptions) {
-    if (!this.isBusiesProcessing && this.busyList.length > 0) {
-      this.isBusiesProcessing = true;
-      this.isDelayProcessing = true;
-      this.updateActiveStatus();
-      timer(options.delay).subscribe(() => {
-        this.isDelayProcessing = false;
-        this.isDurationProcessing = true;
-        this.updateActiveStatus();
-        timer(options.minDuration).subscribe(() => {
-          this.isDurationProcessing = false;
-          this.updateActiveStatus();
-        });
-      });
+    this.busyQueue = this.busyQueue.filter((cur: Subscription) => cur && !cur.closed);
+    if (this.busyQueue.length === 0) {
+      this.progress.next(null);
     }
   }
 
-  private loadBusyQueue(busies: Array<Promise<any> | Subscription>) {
-    busies.filter((busy) => {
-      return busy && !busy.hasOwnProperty('__loaded_mark_by_ng_busy');
-    }).forEach((busy: Promise<any> | Subscription) => {
-      Object.defineProperty(busy, '__loaded_mark_by_ng_busy', {
-        value: true, configurable: false, enumerable: false, writable: false
-      });
-      let cur_busy;
-      if (isPromise(busy)) {
-        cur_busy = from(busy).subscribe();
-      } else {
-        cur_busy = busy;
-      }
-      this.appendToQueue(cur_busy);
-    });
+  private reset() {
+    this.active.next(false);
+    this.busyQueue = [];
+    this.processingIndicator.next(false);
   }
 
   private appendToQueue(busy: Subscription) {
     this.busyQueue.push(busy);
     busy.add(() => {
-      this.busyQueue = this.busyQueue.filter((cur: Subscription) => !cur.closed);
-      this.updateActiveStatus();
+      this.operations.next(new Observable((subscriber) => {
+        this.updateActiveStatus();
+        subscriber.complete();
+      }));
     });
   }
 
   ngOnDestroy(): void {
+    this.destroyIndicator.next(null);
   }
 }

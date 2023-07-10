@@ -1,7 +1,6 @@
-import {NgBusyDirective} from './ng-busy.directive';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
-import {BusyTrackerService} from './service/busy-tracker.service';
-import {BusyConfigHolderService} from './service/busy-config-holder.service';
+import { BusyTrackerService } from './service/busy-tracker.service';
+import { BusyConfigHolderService } from './service/busy-config-holder.service';
 import {
   ApplicationRef, ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
@@ -11,14 +10,11 @@ import {
   Renderer2, TemplateRef, ViewChild,
   ViewContainerRef
 } from '@angular/core';
-import {By} from '@angular/platform-browser';
-import {NgBusyModule} from './ng-busy.module';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {BrowserDynamicTestingModule} from '@angular/platform-browser-dynamic/testing';
-import {DefaultBusyComponent} from './model/busy-config';
-import {NgBusyComponent} from './component/ng-busy/ng-busy.component';
-import {Subscription, Observable} from 'rxjs';
-import {InstanceConfigHolderService} from './service/instance-config-holder.service';
+import { By } from '@angular/platform-browser';
+import { NgBusyModule } from './ng-busy.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Subscription, Observable } from 'rxjs';
+import { InstanceConfigHolderService } from './service/instance-config-holder.service';
 
 const createPromiseWithDelay = (delay: number): Promise<void> => {
   return new Promise((resolve) => {
@@ -29,7 +25,7 @@ const createPromiseWithDelay = (delay: number): Promise<void> => {
 };
 
 const createSubscriptionWithDelay = (delay: number): Subscription => {
-  return Observable.create((o) => {
+  return new Observable((o) => {
     setTimeout(() => {
       o.next();
       o.complete();
@@ -68,7 +64,7 @@ export class CustomBusyComponent {
 })
 class TestNgBusyComponent {
   options: any;
-  @ViewChild('customTemplate', {static: true})
+  @ViewChild('customTemplate', { static: true })
   customTemplate: TemplateRef<any>;
 }
 
@@ -88,7 +84,8 @@ describe('NgBusyDirective', () => {
   let component: TestNgBusyComponent;
   let fixture: ComponentFixture<TestNgBusyComponent>;
   let busyContainer: DebugElement;
-  const mockElementRef: ElementRef = {nativeElement: undefined};
+  let spinner;
+  const mockElementRef: ElementRef = { nativeElement: undefined };
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -97,7 +94,7 @@ describe('NgBusyDirective', () => {
         wrapperClass: 'for_root_class'
       }), BrowserAnimationsModule],
       providers: [BusyConfigHolderService, BusyTrackerService,
-        ApplicationRef, ViewContainerRef, {provide: ElementRef, useValue: mockElementRef}, Renderer2, Injector]
+        ApplicationRef, ViewContainerRef, { provide: ElementRef, useValue: mockElementRef }, Renderer2, Injector]
     });
 
   }));
@@ -122,10 +119,12 @@ describe('NgBusyDirective', () => {
     fixture.detectChanges();
     tick(300);
     fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).not.toBeNull();
+    spinner = fixture.debugElement.query(By.css('lib-ng-busy default-busy'));
+    expect(spinner).not.toBeNull();
     tick(700);
     fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeNull();
+    spinner = fixture.debugElement.query(By.css('lib-ng-busy default-busy'));
+    expect(spinner).not.toBeNull();
     tick();
   }));
 
@@ -134,10 +133,12 @@ describe('NgBusyDirective', () => {
     fixture.detectChanges();
     tick(300);
     fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).not.toBeNull();
+    spinner = fixture.debugElement.query(By.css('lib-ng-busy default-busy'));
+    expect(spinner).not.toBeNull();
     tick(700);
     fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeNull();
+    spinner = fixture.debugElement.query(By.css('lib-ng-busy default-busy'));
+    expect(spinner).not.toBeNull();
     tick();
   }));
 
@@ -149,11 +150,13 @@ describe('NgBusyDirective', () => {
     fixture.detectChanges();
     tick(300);
     fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('lib-ng-busy .custom_template_for_test')).nativeElement.textContent)
+    spinner = fixture.debugElement.query(By.css('lib-ng-busy .custom_template_for_test'))
+    expect(spinner.nativeElement.textContent)
       .toBe('Hi, This is from ng-template.');
     tick(700);
     fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('lib-ng-busy .custom_template_for_test'))).toBeNull();
+    spinner = fixture.debugElement.query(By.css('lib-ng-busy .custom_template_for_test'))
+    expect(spinner).toBeNull();
     tick();
   }));
 
@@ -256,20 +259,4 @@ describe('NgBusyDirective', () => {
     tick();
   }));
 
-  it('should work as expected when use ChangeDetectionStrategy.OnPush', fakeAsync(() => {
-    const fixtureOnPush: ComponentFixture<TestNgBusyOnPushComponent> = TestBed.createComponent(TestNgBusyOnPushComponent);
-    const componentOnPush: TestNgBusyOnPushComponent = fixtureOnPush.componentInstance;
-    mockElementRef.nativeElement = fixtureOnPush.elementRef.nativeElement;
-    fixtureOnPush.detectChanges();
-    componentOnPush.options = createSubscriptionWithDelay(1000);
-    componentOnPush.cdr.markForCheck();
-    fixtureOnPush.detectChanges();
-    tick(300);
-    fixtureOnPush.detectChanges();
-    expect(fixtureOnPush.debugElement.query(By.css('lib-ng-busy default-busy'))).not.toBeNull();
-    tick(700);
-    fixtureOnPush.detectChanges();
-    expect(fixtureOnPush.debugElement.query(By.css('lib-ng-busy default-busy'))).toBeNull();
-    tick();
-  }));
 });

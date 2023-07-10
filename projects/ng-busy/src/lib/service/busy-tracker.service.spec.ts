@@ -1,14 +1,9 @@
 import {TestBed, inject, fakeAsync, tick} from '@angular/core/testing';
 
 import {BusyTrackerService} from './busy-tracker.service';
-import {EventEmitter} from '@angular/core';
 import {Subscription} from 'rxjs/internal/Subscription';
 import {Observable} from 'rxjs/internal/Observable';
 
-const prepareService = (service: BusyTrackerService) => {
-  service.onStopBusy = new EventEmitter<any>();
-  service.onStartBusy = new EventEmitter<any>();
-};
 const prepareOption = (delay: number, minDuration: number, busyList: Array<Promise<any> | Subscription>) => {
   return {
     minDuration: minDuration,
@@ -24,7 +19,7 @@ const createPromiseWithDelay = (delay: number): Promise<any> => {
   });
 };
 const createSubscriptionWithDelay = (delay: number): Subscription => {
-  return Observable.create((o) => {
+  return new Observable((o) => {
     setTimeout(() => {
       o.next();
       o.complete();
@@ -44,7 +39,7 @@ describe('BusyTrackerService', () => {
 
   it('after service init the isActive should be false', inject([BusyTrackerService], (service: BusyTrackerService) => {
     expect(service.isActive).toBe(false);
-    expect(service['busyQueue'].length).toBe(0);
+    expect(service.busyList.length).toBe(0);
   }));
 
   it('the options should work as expected', fakeAsync(inject([BusyTrackerService], (service: BusyTrackerService) => {
@@ -60,7 +55,7 @@ describe('BusyTrackerService', () => {
     expect(service.isActive).toBe(true);
     tick(100);
     expect(service.isActive).toBe(false);
-    expect(service['busyQueue'].length).toBe(0);
+    expect(service.busyList.length).toBe(0);
 
     service.load(prepareOption(200, 100, [createPromiseWithDelay(500)]));
     expect(service.isActive).toBe(false);
@@ -72,7 +67,7 @@ describe('BusyTrackerService', () => {
     expect(service.isActive).toBe(true);
     tick(150);
     expect(service.isActive).toBe(false);
-    expect(service['busyQueue'].length).toBe(0);
+    expect(service.busyList.length).toBe(0);
 
     service.load(prepareOption(0, 300, [createPromiseWithDelay(500)]));
     tick(0);
@@ -83,7 +78,7 @@ describe('BusyTrackerService', () => {
     expect(service.isActive).toBe(true);
     tick(150);
     expect(service.isActive).toBe(false);
-    expect(service['busyQueue'].length).toBe(0);
+    expect(service.busyList.length).toBe(0);
 
     service.load(prepareOption(0, 600, [createPromiseWithDelay(500)]));
     tick(0);
@@ -96,7 +91,7 @@ describe('BusyTrackerService', () => {
     expect(service.isActive).toBe(true);
     tick(100);
     expect(service.isActive).toBe(false);
-    expect(service['busyQueue'].length).toBe(0);
+    expect(service.busyList.length).toBe(0);
 
     service.load(prepareOption(200, 0, [createPromiseWithDelay(500)]));
     expect(service.isActive).toBe(false);
@@ -108,7 +103,7 @@ describe('BusyTrackerService', () => {
     expect(service.isActive).toBe(true);
     tick(100);
     expect(service.isActive).toBe(false);
-    expect(service['busyQueue'].length).toBe(0);
+    expect(service.busyList.length).toBe(0);
 
     service.load(prepareOption(600, 0, [createPromiseWithDelay(500)]));
     expect(service.isActive).toBe(false);
@@ -118,21 +113,20 @@ describe('BusyTrackerService', () => {
     expect(service.isActive).toBe(false);
     tick(60);
     expect(service.isActive).toBe(false);
-    expect(service['busyQueue'].length).toBe(0);
+    expect(service.busyList.length).toBe(0);
   })));
 
   it('after load empty busyList the isActive should be false', inject([BusyTrackerService], (service: BusyTrackerService) => {
     service.load(prepareOption(0, 0, []));
     expect(service.isActive).toBe(false);
-    expect(service['busyQueue'].length).toBe(0);
+    expect(service.busyList.length).toBe(0);
     service.load(prepareOption(10, 5, []));
     expect(service.isActive).toBe(false);
-    expect(service['busyQueue'].length).toBe(0);
+    expect(service.busyList.length).toBe(0);
   }));
 
   it('when there is only one busy after load the option the isActive should be true until the busy finished',
     inject([BusyTrackerService], fakeAsync((service: BusyTrackerService) => {
-      prepareService(service);
       const optionsWithPromise = prepareOption(0, 0, [createPromiseWithDelay(1000)]);
       service.load(optionsWithPromise);
       tick(0);
@@ -163,14 +157,11 @@ describe('BusyTrackerService', () => {
     })));
 
   it('the events should be triggered', inject([BusyTrackerService], fakeAsync((service: BusyTrackerService) => {
-    prepareService(service);
     let isStarted = false;
-    let isStopped = false;
-    service.onStartBusy.subscribe(() => {
-      isStarted = true;
-    });
-    service.onStopBusy.subscribe(() => {
-      isStopped = true;
+    let isStopped = true;
+    service.active.subscribe((status) => {
+      isStarted = status === true;
+      isStopped = status === false;
     });
     const options = prepareOption(0, 0, [createPromiseWithDelay(1000)]);
     service.load(options);
@@ -178,7 +169,7 @@ describe('BusyTrackerService', () => {
     expect(isStarted).toBe(true);
     expect(isStopped).toBe(false);
     tick(500);
-    expect(isStarted).toBe(true);
+    expect(isStarted).toBe(false);
     expect(isStopped).toBe(true);
     expect(service.busyList.length).toBe(0);
   })));
