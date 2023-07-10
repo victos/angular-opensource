@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {IBusyConfig} from '../model/busy-config';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'any'
 })
 export class InstanceConfigHolderService {
   public config: IBusyConfig;

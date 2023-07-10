@@ -6,7 +6,6 @@ import {ChangeDetectorRef, ElementRef, EventEmitter} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {By} from '@angular/platform-browser';
 import {InstanceConfigHolderService} from '../../service/instance-config-holder.service';
-import {DefaultBusyComponent} from '../../model/busy-config';
 
 export class MockElementRef extends ElementRef {}
 
