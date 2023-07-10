@@ -1,8 +1,7 @@
-import {ChangeDetectorRef, Component, EventEmitter, Inject, OnDestroy} from '@angular/core';
-import {animate, style, transition, trigger} from '@angular/animations';
-import {Subscription} from 'rxjs/internal/Subscription';
-import {NgBusyDirective} from '../../ng-busy.directive';
-import {InstanceConfigHolderService} from '../../service/instance-config-holder.service';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, OnDestroy, ViewContainerRef } from '@angular/core';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { InstanceConfigHolderService } from '../../service/instance-config-holder.service';
+import { Subject, takeUntil } from 'rxjs';
 
 const inactiveStyle = style({
   opacity: 0,
@@ -31,30 +30,32 @@ export class NgBusyComponent implements OnDestroy {
   public wrapperClass: string;
   public disableAnimation = false;
   public showBackdrop = true;
-  private readonly busyMonitor: Subscription;
-  isActive = false;
+  private destroyIndicator = new Subject<any>();
+  public show = new Subject<boolean>();
 
   constructor(
     @Inject('instanceConfigHolder') private instanceConfigHolder: InstanceConfigHolderService,
-    @Inject('busyEmitter') private busyEmitter: EventEmitter<boolean>,
-    private readonly cdr: ChangeDetectorRef
+    @Inject('busyEmitter') public busyEmitter: EventEmitter<boolean>,
+    public vcr: ViewContainerRef,
+    private cdr: ChangeDetectorRef,
   ) {
-    this.busyMonitor = this.busyEmitter.subscribe((isActive: boolean) => {
-      const config = this.instanceConfigHolder.config;
-      this.isActive = isActive;
-      this.wrapperClass = config.wrapperClass;
-      this.showBackdrop = config.backdrop;
-      this.disableAnimation = config.disableAnimation;
-      if (this.cdr) {
-        this.cdr.markForCheck();
-      }
+    this.show.pipe(takeUntil(this.destroyIndicator)).subscribe(() => {
+      this.cdr.detectChanges();
     });
+    this.busyEmitter.pipe(takeUntil(this.destroyIndicator))
+      .subscribe((isActive: boolean) => {
+        if (isActive === true) {
+          const config = this.instanceConfigHolder.config;
+          this.wrapperClass = config.wrapperClass;
+          this.showBackdrop = config.backdrop;
+          this.disableAnimation = config.disableAnimation;
+        }
+        this.show.next(isActive);
+      });
   }
 
   ngOnDestroy(): void {
-    if (this.busyMonitor) {
-      this.busyMonitor.unsubscribe();
-    }
+    this.destroyIndicator.next(null);
   }
 
 }
