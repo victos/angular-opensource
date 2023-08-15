@@ -1,9 +1,8 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import {
   BehaviorSubject, Observable, Subject, tap,
-  Subscription, concatAll, forkJoin, from, of,
-  takeUntil, timer, finalize, map, take,
-  filter, iif, mergeMap, switchMap, EMPTY
+  Subscription, concatAll, from, takeUntil,
+  timer, map, take, filter, combineLatest
 } from 'rxjs';
 import { isPromise } from '../util/isPromise';
 
@@ -20,8 +19,9 @@ export class BusyTrackerService implements OnDestroy {
 
   private busyQueue: Array<Subscription> = [];
   private operations: Subject<Observable<any>> = new Subject<Observable<any>>();
-  private progress: Subject<any> = new Subject<any>();
+  private busyDone: Subject<any> = new Subject<any>();
   private destroyIndicator: Subject<any> = new Subject<any>();
+  private checkSubject: Subject<TrackerOptions> = new Subject<TrackerOptions>();
   private processingIndicator: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   active: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
@@ -33,9 +33,34 @@ export class BusyTrackerService implements OnDestroy {
     return [...this.busyQueue];
   }
 
+  get isBusy() {
+    return this.busyQueue.filter(b => !b.closed).length > 0;
+  }
+
   constructor() {
     this.reset();
     this.operations.pipe(takeUntil(this.destroyIndicator), concatAll()).subscribe();
+    this.checkSubject.pipe(takeUntil(this.destroyIndicator)).subscribe((options) => {
+      this.processingIndicator.pipe(take(1)).subscribe((isProcessing) => {
+        if (isProcessing === false && this.isBusy) {
+          this.processingIndicator.next(true);
+          timer(options.delay || 0).pipe(map(() => this.isBusy)).subscribe((stillBusy) => {
+            if (stillBusy) {
+              this.active.next(stillBusy);
+              combineLatest([this.busyDone, timer(options.minDuration || 0)])
+              .pipe(takeUntil(this.active.pipe(filter(a => a === false))))
+              .subscribe(() => {
+                if (!this.isBusy) {
+                  this.reset()
+                }
+              });
+            } else {
+              this.processingIndicator.next(false);
+            }
+          });
+        }
+      });
+    });
   }
 
   load(options: TrackerOptions) {
@@ -47,34 +72,15 @@ export class BusyTrackerService implements OnDestroy {
         })),
         map((busy) => isPromise(busy) ? from(busy).subscribe() : busy),
         tap(subscription => this.appendToQueue(subscription))
-      ));
-    this.operations.next(
-      this.processingIndicator.pipe(take(1), mergeMap(v => iif(
-        () => v === false && this.busyQueue.filter(b => !b.closed).length > 0,
-        of(options.delay || 0).pipe(
-          tap(() => {
-            this.processingIndicator.next(true);
-          }),
-          switchMap((c) => timer(c).pipe(
-            tap(() => this.active.next(true)),
-            map(() => this.busyQueue.filter(b => !b.closed).length),
-            mergeMap((c) => iif(
-              () => c === 0 && (options.minDuration || 0) === 0,
-              EMPTY.pipe(finalize(() => this.reset())),
-              EMPTY.pipe(finalize(() => {
-                forkJoin([this.progress.pipe(take(1)), timer(options.minDuration || 0)])
-                  .pipe(finalize(() => this.reset())).subscribe();
-              }))
-            ))
-          ))),
-        EMPTY)))
+      )
     );
+    this.checkSubject.next(options);
   }
 
   private updateActiveStatus() {
     this.busyQueue = this.busyQueue.filter((cur: Subscription) => cur && !cur.closed);
     if (this.busyQueue.length === 0) {
-      this.progress.next(null);
+      this.busyDone.next(true);
     }
   }
 

@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { BusyTrackerService } from './service/busy-tracker.service';
 import { BusyConfigHolderService } from './service/busy-config-holder.service';
-import { Subject, Subscription, skip, takeUntil } from 'rxjs';
+import { Subject, Subscription, distinctUntilChanged, skip, takeUntil } from 'rxjs';
 import { IBusyConfig } from './model/busy-config';
 import { NgBusyComponent } from './component/ng-busy/ng-busy.component';
 import { InstanceConfigHolderService } from './service/instance-config-holder.service';
@@ -42,6 +42,7 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
   private optionsNorm: IBusyConfig;
   private busyRef: ComponentRef<NgBusyComponent>;
   private destroyIndicator: Subject<any> = new Subject<any>();
+  private configLoader: Subject<IBusyConfig> = new Subject<IBusyConfig>();
   private busyEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
   public template: TemplateRef<any> | Type<any>;
   public templateNgStyle: {};
@@ -53,7 +54,7 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
     private vcr: ViewContainerRef,
     private renderer: Renderer2,
     private injector: Injector) {
-    tracker.active.pipe(skip(1), takeUntil(this.destroyIndicator)).subscribe((status) => {
+    tracker.active.pipe(skip(1), takeUntil(this.destroyIndicator), distinctUntilChanged()).subscribe((status) => {
       if (status === true) {
         this.recreateBusyIfNecessary();
         this.busyStart.emit();
@@ -62,16 +63,21 @@ export class NgBusyDirective implements DoCheck, OnDestroy {
       }
       this.busyEmitter.next(status);
     });
+    this.configLoader.pipe(takeUntil(this.destroyIndicator)).subscribe((config) => {
+      const busyList = config.busy.filter(b => b?.['closed'] !== true && !b?.hasOwnProperty?.('__loaded_mark_by_ng_busy'));
+      this.optionsNorm = config;
+      this.instanceConfigHolder.config = this.optionsNorm;
+      if (busyList.length > 0) {
+        this.tracker.load({
+          busyList, delay: this.optionsNorm.delay,
+          minDuration: this.optionsNorm.minDuration
+        });
+      }
+    });
   }
 
   ngDoCheck() {
-    this.optionsNorm = this.normalizeOptions(this.options);
-    this.instanceConfigHolder.config = this.optionsNorm;
-    this.tracker.load({
-      busyList: this.optionsNorm.busy,
-      delay: this.optionsNorm.delay,
-      minDuration: this.optionsNorm.minDuration
-    });
+    this.configLoader.next(this.normalizeOptions(this.options));
   }
 
   ngOnDestroy() {
