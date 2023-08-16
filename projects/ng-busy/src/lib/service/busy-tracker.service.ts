@@ -50,9 +50,12 @@ export class BusyTrackerService implements OnDestroy {
               combineLatest([this.busyDone, timer(options.minDuration || 0)])
               .pipe(takeUntil(this.active.pipe(filter(a => a === false))))
               .subscribe(() => {
-                if (!this.isBusy) {
-                  this.reset()
-                }
+                this.operations.next(new Observable((subscriber) => {
+                  if (!this.isBusy) {
+                    this.reset();
+                  }
+                  subscriber.complete();
+                }));
               });
             } else {
               this.processingIndicator.next(false);
