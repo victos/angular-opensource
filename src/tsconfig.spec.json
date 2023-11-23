@@ -7,10 +7,7 @@
       "node"
     ]
   },
-  "files": [
-    "test.ts",
-    "polyfills.ts"
-  ],
+  "files": [],
   "include": [
     "**/*.spec.ts",
     "**/*.d.ts"
