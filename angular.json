@@ -70,18 +70,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "angular-opensource:build"
+            "buildTarget": "angular-opensource:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "angular-opensource:build:production"
+              "buildTarget": "angular-opensource:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "angular-opensource:build"
+            "buildTarget": "angular-opensource:build"
           }
         },
         "test": {
