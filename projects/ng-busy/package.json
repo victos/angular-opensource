@@ -32,7 +32,7 @@
     "@angular/common": "^18.0.0",
     "@angular/core": "^18.0.0",
     "@angular/animations": "^18.0.0",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.8.1"
   },
   "dependencies": {
     "tslib": "^2.3.0"
